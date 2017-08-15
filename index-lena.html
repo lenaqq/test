@@ -5,81 +5,52 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="foundation-6.4.1-complete/css/foundation.css">
-    <link rel="stylesheet" href="foundation-6.4.1-complete/css/app.css">
+    <link href="https://www.seekmedi.com/wp-content/themes/zerif-lite/css/bootstrap.css?ver=4.7.4" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
 
-  <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/foundation.css">
+    <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/app.css">
+    <link rel="stylesheet" href="jslib/vis-4.20.1/dist/vis-network.min.css" type="text/css" />
+
+    
+    <script src="jslib/foundation-6.4.1-complete/js/vendor/jquery.js"></script>
+    <script src="jslib/foundation-6.4.1-complete/js/vendor/what-input.js"></script>
+    <script src="jslib/foundation-6.4.1-complete/js/vendor/foundation.js"></script>
+    <script src="jslib/foundation-6.4.1-complete/js/app.js"></script>
+    <script src="jslib//vis-4.20.1/dist/vis.js" type="text/javascript" ></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <link href="https://www.seekmedi.com/wp-content/themes/zerif-lite/css/bootstrap.css?ver=4.7.4" rel="stylesheet">
-  
-    <link rel="stylesheet" href="foundation-6.4.1-complete/css/foundation.css">
-    <link rel="stylesheet" href="foundation-6.4.1-complete/css/app.css">
-
-  <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
-    <script src="foundation-6.4.1-complete/js/vendor/jquery.js"></script>
-    <script src="foundation-6.4.1-complete/js/vendor/what-input.js"></script>
-    <script src="foundation-6.4.1-complete/js/vendor/foundation.js"></script>
-    <script src="foundation-6.4.1-complete/js/app.js"></script>
-
-
+    
+    <script src="store.js"></script>       
     <script src="helpers.js"></script>
+    
+    <style type="text/css">
+        #mynetwork {
+          width: 600px;
+          height: 400px;
+          border: 1px solid lightgray;
+        }
 
-  <script type="text/javascript" src="../../dist/vis.js"></script>
-  <link href="../../dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+        .full-width {
+          width: 98%;
+          max-width: 98%;
+        }
 
-  <style type="text/css">
-    #mynetwork {
-      width: 600px;
-      height: 400px;
-      border: 1px solid lightgray;
-    }
-  </style>
+        .grid-padding-x {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        .div-border {
+          border: 0px solid black;
+          background-color: #C7FFFF;
+            padding: 10px;
+        }
+
+    </style>
   
   </head>
-
-  <style>
-.full-width {
-  width: 98%;
-  max-width: 98%;
-}
-
-.grid-padding-x {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-form.grid-padding-x {
-  padding-left: 10px;
-}
-
-
-table.grid-padding-x {
-  padding-left: 10px;
-}
-
-.calendar th, .calendar td {
-  border: 1px solid black;
-    padding: 5px;
-    text-align: left;
-}
-
-table.calendar {
-  border: 1px solid red;
-  border-collapse: collapse;
-
-}
-
-.beta th, .beta td {
-    border-style:solid;
-    border-top:thick double #ff0000;
-}
-
-.div-border {
-  border: 0px solid black;
-  background-color: #C7FFFF;
-    padding: 10px;
-}
-</style>
 
 <body>
 
@@ -87,19 +58,26 @@ table.calendar {
       <div class="grid-x grid-padding-x"  >
         <div class="large-12 medium-12 cell">
           <div class="primary callout">      
-            <button name="add" class="btn btn-primary" onclick="add_network()">Add</button>  
-            <button name="clear" class="btn btn-primary" onclick="clear_network()">Clear</button>
+            <button name="add" class="btn btn-primary" onclick="add_network_handler()">Add</button>  
+            <button name="clear" class="btn btn-primary" onclick="clear_network_handler()">Clear</button>
+            <button name="print" class="btn btn-primary" onclick="print_data_handler()">Print Data</button> 
           </div>
         </div>
       </div>
 
+      <div class="grid-x grid-padding-x"  >
+        <div class="large-12 medium-12 cell div-border">
+          <div id="mynetwork" class="primary callout"> 
+          </div>
+        </div>
+      </div>
 
       <div class="grid-x grid-padding-x"  >
         <div class="large-6 medium-6 cell div-border">
           <div class="primary callout"> 
-            <h1>This is fetched using callbacks.</h1>
-            <div id="demo-callback">
-            </div>
+            <h5>This is fetched using callbacks.</h5>
+            <textarea id="demo-callback" rows="10">
+            </textarea>
           </div>
         </div>
         <div class="large-6 medium-6 cell div-border">
@@ -140,85 +118,49 @@ table.calendar {
 
     </div>
 
-    <script src="store.js"></script>
-    <script type="text/javascript">
-    function fetch_sample_callback() {
-      store.sample(function(sampleData) {
-        store.tags(
-          sampleData[0],
-          function(tagData) {
-            document.getElementById('demo-callback').innerHTML +=
-              '<h3>Sample</h3>'
-              + JSON.stringify(sampleData)
-              + '<h3>Tags for the first two people</h3>'
-              + JSON.stringify(tagData);
-
-              build_id_list(JSON.stringify(sampleData));
-          },
-          function(error) {
-            // No error is gonna happen but this function must be provided.
-          }
-        );
-      });
-    }
-
-    function fetch_sample_promise() {
-
-      store.sample().then(function(sampleData) {
-        store.tags(sampleData[0]).then(
-          function(tagData) {
-            document.getElementById('demo-promise').innerHTML =
-              '<h3>Sample</h3>'
-              + JSON.stringify(sampleData)
-              + '<h3>Tags for the first two people</h3>'
-              + JSON.stringify(tagData);
-          },
-          function(error) {
-            // No error is gonna happen.
-          });
-      });
-    }
-
-    function add_network()
-    {
-      fetch_sample_callback();
-    }
+<script type="text/javascript">
+    /* Variable Declarations */
+    let sample_data_network = { id_list: [], following_list: [] };
+    let global_nodes = new vis.DataSet();
+    let global_edges = new vis.DataSet();
 
     /*
-    fetch_sample_callback();
-    
-    fetch_sample_promise();
+    // create an array with nodes
+    global_nodes = new vis.DataSet([
+      {id: 1, label: 'Node 1'},
+      {id: 2, label: 'Node 2'},
+      {id: 3, label: 'Node 3'},
+      {id: 4, label: 'Node 4'},
+      {id: 5, label: 'Node 5'}
+    ]);
+
+    // create an array with edges
+    global_edges = new vis.DataSet([
+      {from: 1, to: 3, arrows:'to'},
+      {from: 1, to: 2},
+      {from: 2, to: 4},
+      {from: 2, to: 5},
+      {from: 3, to: 3}
+    ]);
     */
 
-    </script>
+    /* Start running script */
+    //fetch_sample_callback(sample_data_network);
 
-    <script type="text/javascript">
-      // create an array with nodes
-      var nodes = new vis.DataSet([
-        {id: 1, label: 'Node 1'},
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-        {id: 4, label: 'Node 4'},
-        {id: 5, label: 'Node 5'}
-      ]);
+    // add_network_handler();
 
-      // create an array with edges
-      var edges = new vis.DataSet([
-        {from: 1, to: 3, arrows:'to'},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5},
-        {from: 3, to: 3}
-      ]);
+    // create a network
+    /*
+    var container = document.getElementById('mynetwork');
+    var data = {
+      nodes: global_nodes,
+      edges: global_edges
+    };
+    var options = {};
+    var network = new vis.Network(container, data, options);
+    */
 
-      // create a network
-      var container = document.getElementById('mynetwork');
-      var data = {
-        nodes: nodes,
-        edges: edges
-      };
-      var options = {};
-      var network = new vis.Network(container, data, options);
+    //fetch_sample_promise();
     </script>
 
   </body>
