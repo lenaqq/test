@@ -3,6 +3,7 @@
   	let tag_list;
   	let unique_tag_list;
   	let tag_count_list;
+    let global_id_data_set;
 
     /*
      * Twitter data fetching functions
@@ -142,10 +143,11 @@
 
         let zip = (a1, a2, a3) => a1.map((x, i) => [x, a2[i], a3[i]]);
         let tag_data_set = zip(unique_tag_list, tag_count_list, tag_ref_id_list);
-        let id_data_set = find_following_ids_and_tags(sample_data_network, id_tag_list);
+        
+        global_id_data_set = find_following_ids_and_tags(sample_data_network, id_tag_list);
 
-        t = $('#id_following_table').DataTable( {
-            data: id_data_set,
+        $('#id_following_table').DataTable( {
+            data: global_id_data_set,
             columns: [
                         { title: "Id" },
                         { title: "Following Ids" },
@@ -175,8 +177,8 @@
 
     function clear_network_handler()
     {
-    	global_nodes = new vis.DataSet();
-    	global_edges = new vis.DataSet();
+    	 global_nodes = new vis.DataSet();
+    	 global_edges = new vis.DataSet();
 
         // recompose the graph and layout
         container = document.getElementById('twitter_network');
@@ -189,6 +191,36 @@
 
         sample_data_network.id_list = [];
         sample_data_network.following_list = [];
+
+        global_id_data_set = [];
+
+        $('#id_following_table').DataTable( {
+            data: global_id_data_set,
+            columns: [
+                        { title: "Id" },
+                        { title: "Following Ids" },
+                        { title: "Tags" }
+                    ],
+            destroy: true,
+            scrollY: "300px",
+            scrollCollapse: true,
+            paging:         false
+          } );
+
+        tag_data_set = [];
+        
+        $('#tag_table').DataTable( {
+          data: tag_data_set,
+          columns: [
+                      { title: "Tag" },
+                      { title: "Frequency" },
+                      { title: "Referred Ids" },
+                  ],
+          destroy: true,
+          scrollY: "300px",
+          scrollCollapse: true,
+          paging:         false
+        } );        
 	}
 
 	function print_data_handler()
@@ -271,41 +303,10 @@
  *
  * Params:
  *		following_list; 
- *			eg, input = 
-						[
-						[7015112,688483],
-						[205754331,24830940],
-						[183068454,1562971],
-						[688483,5803082],
-						[14127551,15859039],
-						[12468982,5803082],
-						[6475722,14236481],
-						[1389501,24830940],
-						[295,1000591],
-						[202003,2695901]
-						]
+ *			eg, input = [[7015112,688483],[205754331,24830940],[183068454,1562971]]
  *
  * Return
-	Output: idlist = 
-	[
-	7015112,
-	688483,
-	205754331,
-	24830940,
-	183068454,
-	1562971,
-	5803082,
-	14127551,
-	15859039,
-	12468982,
-	6475722,
-	14236481,
-	1389501,
-	295,
-	1000591,
-	202003,
-	2695901
-	]
+*     Output: idlist = [7015112,688483,205754331,24830940]
  *
  */
 function build_id_list(following_list, id_list) 
@@ -461,8 +462,26 @@ function select_table(event)
 {
   target_elem = event.target;
 
-  if (target_elem.parentElement.firstElementChild == target_elem)
-    alert("select_table: cell = " + target_elem.innerHTML);
-  else
-    alert("not first child");
+  if (target_elem.parentElement.firstElementChild == target_elem
+      && target_elem.tagName == 'TD')
+  {
+
+      // Todo: remove already highlighted nodes
+
+
+      // Highlight new selected nodes
+      id = parseInt(target_elem.innerHTML);
+      global_nodes.update([{id:id, color:{background:'#FF0077'}}]);
+
+      id_idx = sample_data_network.id_list.indexOf(id);
+
+      folowing_list = global_id_data_set[id_idx][1]; // following id list
+
+      for (following_id of folowing_list)
+      {
+          global_nodes.update([{id:following_id, color:{background:'#5500DD'}}]); 
+      }
+  }
+  //else
+  //  alert("not first child");
 }
