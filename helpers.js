@@ -1,8 +1,8 @@
     const return_chars = '&#13;&#10;';
 	    
-	let tag_list;
-	let unique_tag_list;
-	let tag_count_list;
+  	let tag_list;
+  	let unique_tag_list;
+  	let tag_count_list;
 
     /*
      * Twitter data fetching functions
@@ -120,40 +120,68 @@
 
         // update global network data
         sample_data_network.id_list = sample_data_network.id_list.concat(new_id_list);
-        //sample_data_network.following_list = sample_data_network.following_list.concat(new_following_list);        
+ 
+  	    tag_list = get_tag_list(sample_data_network.id_list);
 
-        // recompose the graph and layout
-        container = document.getElementById('mynetwork');
-        data = {
-          nodes: global_nodes,
-          edges: global_edges
-        };
-        options = {};
-        network = new vis.Network(container, data, options);
+  	    unique_tag_list = build_unique_tag_list(tag_list).sort();
 
-    
-	    /* Print Node list */
-	    //document.getElementById('demo-callback').innerHTML += return_chars + 'Node List: ' + return_chars;    
-	    //document.getElementById("demo-callback").innerHTML += return_chars + 'Following List: ' + return_chars;
-	    
-	    //document.getElementById("demo-callback").innerHTML += return_chars + 'Tag List: ' + return_chars;
-	    
-	    tag_list = get_tag_list(sample_data_network.id_list);
+  	    tags_count = unique_tag_list.length;
 
-	    unique_tag_list = build_unique_tag_list(tag_list).sort();
+  	    // create tag_count_list with same length as unique_tag_list
+  	    tag_count_list = new Array(tags_count);
+  	    tag_count_list.fill(0);
 
-	    
-	    document.getElementById("demo-callback").innerHTML += return_chars + '----------------------------------: ' + return_chars;
+  	    count_tags(tag_list, unique_tag_list, tag_count_list);
 
-	    tags_count = unique_tag_list.length;
+        let zip = (a1, a2,) => a1.map((x, i) => [x, a2[i], []]);
+        let tag_data_set = zip(unique_tag_list, tag_count_list);
 
-	    // create tag_count_list with same length as unique_tag_list
-	    tag_count_list = new Array(tags_count);
-	    tag_count_list.fill(0);
+        let id_data_set = find_following_ids_and_tags(sample_data_network, tag_list);
+        //let tag_data_set = [];
 
-	    count_tags(tag_list, unique_tag_list, tag_count_list)
+    /*
+    var dataSet3 = [ ['aaaaaa', 4, [1, 2, 4]], ['xsdf', 2, []], ['sad', 3, [3, 54, 2, 3, 4, 5, 4]] ];
 
+        $('#id_following_table').DataTable( {
+            data: id_data_set,
+            columns: [
+                          { title: "Id" },
+                          { title: "Following Id" },
+                          { title: "Tags" }
+                      ],
+            destroy: true
+          } );
+*/
+    //var dataSet3 = [ ['xxxxxxx', [1, 2, 4]], ['xsdf', []], ['sad',[3, 54, 2, 3, 4, 5, 4]] ];
+
+        t = $('#id_following_table').DataTable( {
+            data: id_data_set,
+            columns: [
+                        { title: "Id" },
+                        { title: "Following Ids" },
+                        { title: "Tags" }
+                    ],
+            destroy: true,
+            scrollY: "300px",
+            scrollCollapse: true,
+            paging:         false
+          } );
+
+
+        $('#tag_table').DataTable( {
+          data: tag_data_set,
+          columns: [
+                      { title: "Tag" },
+                      { title: "Frequency" },
+                      { title: "Referred Ids" },
+                  ],
+          destroy: true,
+          scrollY: "300px",
+          scrollCollapse: true,
+          paging:         false
+        } );
     }
+    
 
     function clear_network_handler()
     {
@@ -210,6 +238,40 @@
         }
     }
 
+    /*
+     * find_following_ids_and_tags
+     *
+     * construct data set: [ [1, [4, 3, 6]], [3, [1, 2]], [5, []]]
+     */
+    function find_following_ids_and_tags(network, tag_list)
+    {
+        let id_list = network.id_list;
+        let following_list = network.following_list;
+        let data_set = [];
+
+        for (i = 0; i < id_list.length; i++)
+        {
+            id = id_list[i];
+            id_folowing_list = [];
+
+            for (following_idx = 0; following_idx < following_list.length; following_idx++)
+            {
+                if (id === following_list[following_idx][0])   // compare from id
+                {
+                    id_folowing_list.push(following_list[following_idx][1]); // add to id
+                }
+            }
+
+            data = [ id, id_folowing_list, tag_list[i] ];
+            data_set.push(data);
+
+            //id_table.row.add(data);
+        }
+
+        //id_table.draw();
+        return data_set;
+
+    }
 /*
  * build_id_list(following_list)
  *
@@ -331,6 +393,9 @@ function build_unique_tag_list(tag_list)
 }
 */
 
+/*
+ * print_list
+ */
 function print_list(title, data_list) 
 {
 	try
@@ -393,3 +458,13 @@ function get_tags(id_list) {
 	store.tags(id_list, )
 }
 */
+
+function select_table(event)
+{
+  target_elem = event.target;
+
+  if (target_elem.parentElement.firstElementChild == target_elem)
+    alert("select_table: cell = " + target_elem.innerHTML);
+  else
+    alert("not first child");
+}

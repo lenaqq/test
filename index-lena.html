@@ -13,17 +13,25 @@
     <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/app.css">
     <link rel="stylesheet" href="jslib/vis-4.20.1/dist/vis-network.min.css" type="text/css" />
 
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.foundation.min.css" type="text/css" />
+
+
     <script src="jslib/foundation-6.4.1-complete/js/vendor/jquery.js"></script>
     <script src="jslib/foundation-6.4.1-complete/js/vendor/what-input.js"></script>
     <script src="jslib/foundation-6.4.1-complete/js/vendor/foundation.js"></script>
     <script src="jslib/foundation-6.4.1-complete/js/app.js"></script>
     <script src="jslib//vis-4.20.1/dist/vis.js" type="text/javascript" ></script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    
+    <!--ipt src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script -->
+         
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>    
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>     
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.foundation.min.js"></script>
+
     <script src="store.js"></script>       
     <script src="helpers.js"></script>
+
     
     <style type="text/css">
         #mynetwork {
@@ -54,6 +62,8 @@
 
 <body>
 
+
+
     <div class="container.fluid  grid-padding-x div-border">
       <div class="grid-x grid-padding-x"  >
         <div class="large-12 medium-12 cell">
@@ -65,6 +75,7 @@
         </div>
       </div>
 
+      <!-- network row -->
       <div class="grid-x grid-padding-x"  >
         <div class="large-12 medium-12 cell div-border">
           <div id="mynetwork" class="primary callout"> 
@@ -72,14 +83,30 @@
         </div>
       </div>
 
+      <!-- Table row -->
       <div class="grid-x grid-padding-x"  >
         <div class="large-6 medium-6 cell div-border">
           <div class="primary callout"> 
-            <h5>This is fetched using callbacks.</h5>
+            <table id="id_following_table" class="display" width="100%" onclick="select_table(event)"></table>
+          </div>
+        </div>
+
+        <div class="large-6 medium-6 cell div-border">
+          <div class="primary callout">           
+            <table id="tag_table" class="display" width="100%"></table>
+          </div>
+        </div>        
+      </div>
+
+      <!-- Text area row for debugging messages -->
+      <div class="grid-x grid-padding-x"  >
+        <div class="large-6 medium-6 cell div-border">
+          <div class="primary callout"> 
             <textarea id="demo-callback" rows="10">
             </textarea>
           </div>
         </div>
+
         <div class="large-6 medium-6 cell div-border">
           <div class="primary callout">           
             <h1>This is fetched using promises.</h1>
@@ -89,6 +116,7 @@
         </div>
       </div>
 
+      <!-- SVG, Canvas row -->
       <div class="grid-x grid-padding-x">
         <div class="large-6  medium-6 cell div-border">
           <div class="primary callout"> 
@@ -124,7 +152,16 @@
     let global_nodes = new vis.DataSet();
     let global_edges = new vis.DataSet();
 
-    /*
+    // recompose the graph and layout
+    container = document.getElementById('mynetwork');
+    data = {
+      nodes: global_nodes,
+      edges: global_edges
+    };
+    options = {};
+    network = new vis.Network(container, data, options);
+
+/*
     // create an array with nodes
     global_nodes = new vis.DataSet([
       {id: 1, label: 'Node 1'},
@@ -161,6 +198,49 @@
     */
 
     //fetch_sample_promise();
+
+ 
+    var dataSet1 = [ [1], [2], [3] ];
+    var dataSet1_1 = [ [6], [7], [8] ];
+    var dataSet2 = [ [6, 1], [7, 2], [8, 3] ];
+    var dataSet3 = [ ['abs', 4, [1, 2, 4]], ['xsdf', 2, []], ['sad', 3, [3, 54, 2, 3, 4, 5, 4]] ];
+
+    $(document).ready(function() {
+        $('#id_following_table').DataTable( {
+            data: dataSet3,
+            columns: [
+                { title: "Id" },
+                { title: "Following Id" },
+                { title: "Tags" },
+            ]
+          } );
+        } );
+
+        
+
+ /*
+    $(document).ready(function() {
+        $('#following_table').DataTable( {
+            data: dataSet2,
+            columns: [
+                { title: "Id" }
+            ]
+          } );
+        } );
+        
+
+    $(document).ready(function() {
+        $('#tag_table').DataTable( {
+            data: dataSet3,
+            columns: [
+                { title: "Tag" },
+                { title: "Frequency" },
+                { title: "Reference Ids" }
+            ]
+          } );
+        } );      
+    */
+
     </script>
 
   </body>
