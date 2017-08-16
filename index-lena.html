@@ -34,8 +34,8 @@
 
     
     <style type="text/css">
-        #mynetwork {
-          width: 600px;
+        #twitter_network {
+          width: 90%;
           height: 400px;
           border: 1px solid lightgray;
         }
@@ -78,7 +78,7 @@
       <!-- network row -->
       <div class="grid-x grid-padding-x"  >
         <div class="large-12 medium-12 cell div-border">
-          <div id="mynetwork" class="primary callout"> 
+          <div id="twitter_network" class="primary callout"> 
           </div>
         </div>
       </div>
@@ -153,7 +153,7 @@
     let global_edges = new vis.DataSet();
 
     // recompose the graph and layout
-    container = document.getElementById('mynetwork');
+    container = document.getElementById('twitter_network');
     data = {
       nodes: global_nodes,
       edges: global_edges
@@ -188,7 +188,7 @@
 
     // create a network
     /*
-    var container = document.getElementById('mynetwork');
+    var container = document.getElementById('twitter_network');
     var data = {
       nodes: global_nodes,
       edges: global_edges

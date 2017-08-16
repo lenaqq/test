@@ -87,6 +87,7 @@
      */
     function add_network_handler()
     {
+        // alert("add_network_handler");
         let new_following_list = [];
         //get_sample_data(sample_data_network);
         new_following_list = get_sample_data_following_list();
@@ -121,38 +122,27 @@
         // update global network data
         sample_data_network.id_list = sample_data_network.id_list.concat(new_id_list);
  
-  	    tag_list = get_tag_list(sample_data_network.id_list);
+  	    id_tag_list = get_tag_list(sample_data_network.id_list);
 
-  	    unique_tag_list = build_unique_tag_list(tag_list).sort();
+  	    unique_tag_list = build_unique_tag_list(id_tag_list).sort();
 
   	    tags_count = unique_tag_list.length;
 
   	    // create tag_count_list with same length as unique_tag_list
-  	    tag_count_list = new Array(tags_count);
+  	    tag_count_list = Array(tags_count);
   	    tag_count_list.fill(0);
+        tag_ref_id_list = Array(tags_count);
 
-  	    count_tags(tag_list, unique_tag_list, tag_count_list);
+        for (i = 0; i < tags_count; i++)
+          tag_ref_id_list[i] = [];
 
-        let zip = (a1, a2,) => a1.map((x, i) => [x, a2[i], []]);
-        let tag_data_set = zip(unique_tag_list, tag_count_list);
+        //tag_ref_id_list.fill(Array()); does not work
 
-        let id_data_set = find_following_ids_and_tags(sample_data_network, tag_list);
-        //let tag_data_set = [];
+  	    count_tags(sample_data_network.id_list, id_tag_list, unique_tag_list, tag_count_list, tag_ref_id_list);
 
-    /*
-    var dataSet3 = [ ['aaaaaa', 4, [1, 2, 4]], ['xsdf', 2, []], ['sad', 3, [3, 54, 2, 3, 4, 5, 4]] ];
-
-        $('#id_following_table').DataTable( {
-            data: id_data_set,
-            columns: [
-                          { title: "Id" },
-                          { title: "Following Id" },
-                          { title: "Tags" }
-                      ],
-            destroy: true
-          } );
-*/
-    //var dataSet3 = [ ['xxxxxxx', [1, 2, 4]], ['xsdf', []], ['sad',[3, 54, 2, 3, 4, 5, 4]] ];
+        let zip = (a1, a2, a3) => a1.map((x, i) => [x, a2[i], a3[i]]);
+        let tag_data_set = zip(unique_tag_list, tag_count_list, tag_ref_id_list);
+        let id_data_set = find_following_ids_and_tags(sample_data_network, id_tag_list);
 
         t = $('#id_following_table').DataTable( {
             data: id_data_set,
@@ -189,7 +179,7 @@
     	global_edges = new vis.DataSet();
 
         // recompose the graph and layout
-        container = document.getElementById('mynetwork');
+        container = document.getElementById('twitter_network');
         data = {
           nodes: global_nodes,
           edges: global_edges
@@ -205,7 +195,7 @@
 	{
 	    print_list('ID LIST', sample_data_network.id_list);
 	    print_list('FOLLOWING LIST', sample_data_network.following_list);
-	    print_list("ID's TAG LIST", tag_list);
+	    print_list("ID's TAG LIST", id_tag_list);
 	    print_list('UNIQUE TAG LIST', unique_tag_list);
 		print_list('TAG COUNT LIST', tag_count_list);
 	}
@@ -242,8 +232,12 @@
      * find_following_ids_and_tags
      *
      * construct data set: [ [1, [4, 3, 6]], [3, [1, 2]], [5, []]]
+     *
+     * Params:
+     *    network       containing id_list and following list
+     *    id_tag_list   list of tags corresponding to the ids, fetched by get_tag_list() or store.tags()
      */
-    function find_following_ids_and_tags(network, tag_list)
+    function find_following_ids_and_tags(network, id_tag_list)
     {
         let id_list = network.id_list;
         let following_list = network.following_list;
@@ -256,13 +250,13 @@
 
             for (following_idx = 0; following_idx < following_list.length; following_idx++)
             {
-                if (id === following_list[following_idx][0])   // compare from id
+                if (id === following_list[following_idx][0])   // compare 'from id'
                 {
-                    id_folowing_list.push(following_list[following_idx][1]); // add to id
+                    id_folowing_list.push(following_list[following_idx][1]); // add 'to id'
                 }
             }
 
-            data = [ id, id_folowing_list, tag_list[i] ];
+            data = [ id, id_folowing_list, id_tag_list[i] ];
             data_set.push(data);
 
             //id_table.row.add(data);
@@ -360,18 +354,22 @@ function build_unique_tag_list(tag_list)
 	return unique_tag_list;
 }
 
-function count_tags(tag_list, unique_tag_list, tag_count_list)
+function count_tags(id_list, tag_list, unique_tag_list, tag_count_list, tag_ref_id_list)
 {
 	for (id_idx = 0; id_idx < tag_list.length; id_idx++)
+  //for (var tags of tag_list)
 	{
-		id_tag_list = tag_list[id_idx];
+		//tags = tag_list[id_idx];
 
-		for (i = 0; i < id_tag_list.length; i++)
+		for (var one_tag of tag_list[id_idx]) // i = 0; i < tags.length; i++)
 		{
-			tag_index = unique_tag_list.indexOf(id_tag_list[i]);
+  			tag_index = unique_tag_list.indexOf(one_tag); //tags[i]);
 
-			if (tag_index >= 0)
-				tag_count_list[tag_index]++;
+  			if (tag_index >= 0)
+        {
+    				tag_count_list[tag_index]++;
+            tag_ref_id_list[tag_index].push(id_list[id_idx]);
+        }
 		}
 	}
 }
