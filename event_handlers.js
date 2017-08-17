@@ -1,4 +1,7 @@
-let selected_node_ids = [];
+let selected_and_following_node_ids = [];
+let selected_and_follower_node_ids = [];
+let selected_id_table_id_elem = null;
+let selected_tag_table_id_elem = null;
 
 /*
  * Event handlers
@@ -15,7 +18,7 @@ function add_network_handler()
                       sample_data_network.id_list
                   );
           
-    // Add nodes to network for drawing
+    // Add nodes to network for network view
     for (let i = 0; i < new_id_list.length; i++)
     {
         addNode(global_nodes, new_id_list[i]);
@@ -36,6 +39,7 @@ function add_network_handler()
             sample_data_network.following_list.push(new_following_list[i]);
         }
     }
+    network.fit();
 
     // update global network data
     sample_data_network.id_list = sample_data_network.id_list.concat(new_id_list);
@@ -72,22 +76,22 @@ function add_network_handler()
                 ],
         destroy: true,
         scrollY: "300px",
-        scrollCollapse: true,
+        //scrollCollapse: true,
         paging:         false
       } );
 
 
     $('#tag_table').DataTable( {
-      data: tag_data_set,
-      columns: [
+        data: tag_data_set,
+        columns: [
                   { title: "Tag" },
                   { title: "Frequency" },
                   { title: "Referred Ids" },
               ],
-      destroy: true,
-      scrollY: "300px",
-      scrollCollapse: true,
-      paging:         false
+        destroy: true,
+        scrollY: "300px",
+        //scrollCollapse: true,
+        paging:         false
     } );
 }
 
@@ -103,7 +107,6 @@ function clear_network_handler()
       nodes: global_nodes,
       edges: global_edges
     };
-    options = {};
     network = new vis.Network(container, data, options);
 
     sample_data_network.id_list = [];
@@ -120,7 +123,7 @@ function clear_network_handler()
                 ],
         destroy: true,
         scrollY: "300px",
-        scrollCollapse: true,
+        //scrollCollapse: true,
         paging:         false
       } );
 
@@ -135,20 +138,41 @@ function clear_network_handler()
               ],
       destroy: true,
       scrollY: "300px",
-      scrollCollapse: true,
+      //scrollCollapse: true,
       paging:         false
     } );        
 }
 
-function reset_color_for_selected_nodes()
+function reset_color_for_selected_nodes(selected_node_ids)
 {  
     for (i = 0; i < selected_node_ids.length; i++)
     { 
         node_id = selected_node_ids[i];
-        global_nodes.update([{id:node_id, color:{background:'#2870B2'}}]);
+        console.log('remove ' + node_id);
+        global_nodes.update([{id:node_id, color:{background:NODE_COLOUR}}]);
     }
 
     selected_node_ids = [];
+}
+
+function highlight_selected_node_and_following_node(id, selected_node_ids, selected_node_colour, adj_node_colour)
+{
+    //reset_color_for_selected_nodes(selected_node_ids);
+    reset_color_for_all_selected_nodes_and_tds();
+
+    // Highlight new selected nodes
+    global_nodes.update([{id:id, color:{background:selected_node_colour}}]);
+    selected_node_ids.push(id);
+
+    id_idx = sample_data_network.id_list.indexOf(id);
+
+    folowing_list = global_id_data_set[id_idx][1]; // following id list
+
+    for (following_id of folowing_list)
+    {
+        global_nodes.update([{id:following_id, color:{background:adj_node_colour}}]); 
+        selected_node_ids.push(following_id);
+    }
 }
 
 /*
@@ -165,24 +189,21 @@ function select_id_table(event)
     if (target_elem.parentElement.firstElementChild === target_elem
             && target_elem.tagName === 'TD')
     {
-        reset_color_for_selected_nodes();
-
-        // Highlight new selected nodes
         id = parseInt(target_elem.innerHTML);
-        selected_node_ids.push(id);
+        highlight_selected_node_and_following_node
+        (
+            id, 
+            selected_and_following_node_ids, 
+            SELECTED_NODE_FOR_FOLLOWING_COLOUR,
+            FOLLOWING_NODE_COLOUR
+        );
 
-        global_nodes.update([{id:id, color:{background:'#FF0077'}}]);
-        selected_node_ids.push(id);
+        if (selected_id_table_id_elem != null)
+            selected_id_table_id_elem.removeAttribute('bgColor');
 
-        id_idx = sample_data_network.id_list.indexOf(id);
+        target_elem.setAttribute('bgColor', SELECTED_NODE_FOR_FOLLOWING_COLOUR);
 
-        folowing_list = global_id_data_set[id_idx][1]; // following id list
-
-        for (following_id of folowing_list)
-        {
-            global_nodes.update([{id:following_id, color:{background:'#5500DD'}}]); 
-            selected_node_ids.push(following_id);
-        }
+        selected_id_table_id_elem = target_elem;
     }
 }
 
@@ -193,22 +214,62 @@ function select_tag_table(event)
     
     if (target_elem.parentElement.firstElementChild === target_elem
           && target_elem.tagName === 'TD')
-      {
-          tag_name = target_elem.innerHTML;
+    {
+        tag_name = target_elem.innerHTML;
 
-          tag_index = unique_tag_list.indexOf(tag_name);
+        tag_index = unique_tag_list.indexOf(tag_name);
 
-          ref_id_list = tag_ref_id_list[tag_index];
+        ref_id_list = tag_ref_id_list[tag_index];
 
-          reset_color_for_selected_nodes();
+        //reset_color_for_selected_nodes(selected_and_following_node_ids);
+        reset_color_for_all_selected_nodes_and_tds();
 
-          for (id of ref_id_list)
-          {
-            global_nodes.update([{id:id, color:{background:'#FF0077'}}]);
-            selected_node_ids.push(id);
-          }
-      }
+        for (id of ref_id_list)
+        {
+          global_nodes.update([{id:id, color:{background:TAGGED_NODE_COLOUR}}]);
+          selected_and_following_node_ids.push(id);
+        }
+
+
+        if (selected_tag_table_id_elem != null)
+            selected_tag_table_id_elem.removeAttribute('bgColor');
+
+        target_elem.setAttribute('bgColor', TAGGED_NODE_COLOUR);     
+
+        selected_tag_table_id_elem = target_elem;     
+    }
   }
+
+function click_node_handler()
+{
+    network.on('click', function(properties) {
+        let ids = properties.nodes;
+        let clicked_nodes = global_nodes.get(ids);
+
+        console.log('clicked nodes:', clicked_nodes);
+
+        for (i = 0; i < clicked_nodes.length; i++)
+          highlight_selected_node_and_following_node
+          (
+              clicked_nodes[i].id, 
+              selected_and_follower_node_ids, 
+              SELECTED_NODE_FOR_FOLLOWER_COLOUR,
+              FOLLOWER_NODE_COLOUR
+          );
+    });
+}
+
+function reset_color_for_all_selected_nodes_and_tds()
+{
+    reset_color_for_selected_nodes(selected_and_following_node_ids);
+    reset_color_for_selected_nodes(selected_and_follower_node_ids);
+
+    if (selected_id_table_id_elem != null)
+        selected_id_table_id_elem.removeAttribute('bgColor');
+
+    if (selected_tag_table_id_elem != null)
+        selected_tag_table_id_elem.removeAttribute('bgColor');
+}
 
 function print_data_handler()
 {
@@ -217,9 +278,4 @@ function print_data_handler()
     print_list("ID's TAG LIST", id_tag_list);
     print_list('UNIQUE TAG LIST', unique_tag_list);
     print_list('TAG COUNT LIST', tag_count_list);
-}
-
-function reset_colors()
-{
-
 }
