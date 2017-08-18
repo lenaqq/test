@@ -41,18 +41,45 @@
     <header>
     <h1 id="title">Twitter Network Visualisation</h1>
     </header>
-    <div class="container.fluid  grid-padding-x">
+    <div class="container.fluid full-width grid-padding-x">
       <div class="grid-x grid-padding-x"  >
         <!-- network row -->
-        <div class="large-8 medium-8 cell div-border">
-          <div class="grid-x grid-padding-x"  >
-            <div class="large-1 medium-1 cell">
-                <div class="sidebutton"><button name="add" class="btn btn-primary" onclick="add_network_handler()">Add</button></div>
-                <div class="sidebutton"><button name="clear" class="btn btn-primary" onclick="clear_network_handler()">Clear</button></div>
-                <div class="sidebutton"><button name="print" class="btn btn-primary" onclick="reset_color_for_all_selected_nodes_and_tds()">Reset Color</button></div> 
-                <div class="sidebutton" style="display:none"><button name="print" class="btn btn-primary" onclick="print_data_handler()">Print</button></div> 
-            </div>        
-            
+        <div class="large-8 medium-8 cell">
+          <div class="grid-x grid-padding-x">
+            <div class="large-1 medium-1" style="padding-left: 10px;">
+
+              <div class="sidebutton">
+                  <button name="add" class="btn btn-primary" onclick="add_network_handler()">Add</button>
+              </div>
+              <div class="sidebutton">
+                  <button name="clear" class="btn btn-primary" onclick="clear_network_handler()">Clear</button>
+              </div>
+              &nbsp&nbsp
+              <div class="sidepanel">
+                <strong>Total Number of Ids:</strong><br>
+                  <span id="num_ids">0</span>
+                <br><br>
+                <strong>Total Numbed of Relations:</strong> <br>
+                  <span id="num_edges">0</span>
+                <br><br>
+                <strong>Total Numbed of Tags:</strong> <br>
+                  <span id="num_tags">0</span>
+                <br><br>
+                <strong>Most Followed:</strong><br>
+                  <span id="statpanel-1">
+                    Id <span id="most_followed_id">234</span> has <span id="num_followers">2</span> followers.
+                  </span>
+                <br><br>
+                <strong>Most Followings:</strong> <br>
+                  <span id="statpanel-2">
+                    Id  <span id="most_following_id">333, 90780, 9780978, 89798798798, 8979</span> followed <span id="num_followings">2</span> Ids.
+                  </span>
+              </div>
+                <!--div class="sidebutton" style="display:none"><button name="print" class="btn btn-primary" onclick="reset_color_for_all_selected_nodes_and_tds()">Reset Color</button></div> 
+                <div class="sidebutton" style="display:none"><button name="print" class="btn btn-primary" onclick="print_data_handler()">Print</button></div --> 
+                 
+            </div>
+
             <div class="large-11 medium-11 cell">
               <div id="twitter_network" class="primary callout round-corner"> 
               </div>
@@ -61,7 +88,7 @@
         </div>
 
         <!-- Table row -->
-        <div class="large-4 medium-4 cell div-border">
+        <div class="large-4 medium-4">
           <div class="primary callout round-corner"> 
             <table id="id_table" class="display" width="100%" onclick="select_id_table(event)"></table>
           </div>
@@ -78,11 +105,11 @@
     const NODE_COLOUR                         = '#EAE7E4';
     const ADDED_NODE_COLOUR                   = '#33BBAA';
     const SELECTED_NODE_FOR_FOLLOWING_COLOUR  = '#33BBAA';
-    const SELECTED_NODE_FOR_FOLLOWER_COLOUR   = '#33AF00';
+    const SELECTED_NODE_FOR_FOLLOWER_COLOUR   = '#33BBAA';
     const SELECTED_NODE_COLOUR                = '#33AFAA';
     const TAGGED_NODE_COLOUR                  = '#FFAFAA';
     const FOLLOWING_NODE_COLOUR               = '#E8C7BE';
-    const FOLLOWER_NODE_COLOUR                = '#770000';
+    const FOLLOWER_NODE_COLOUR                = '#E8C766';
     const EDGE_COLOUR                         = '#9193FF';
 
 </script>
@@ -166,6 +193,9 @@
         } );
 
         $("div.toolbar_tag_table").html('<b>Tag Table</b>');        
+
+    $('#statpanel-1').attr('style', 'visibility:hidden');
+    $('#statpanel-2').attr('style', 'visibility:hidden');
 
     </script>
 
