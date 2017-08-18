@@ -19,9 +19,10 @@ function add_network_handler()
                   );
           
     // Add nodes to network for network view
-    for (let i = 0; i < new_id_list.length; i++)
+    for (id of new_id_list)
     {
-        addNode(global_nodes, new_id_list[i]);
+        addNodeWithColor(global_nodes, id, ADDED_NODE_COLOUR);
+        selected_and_following_node_ids.push(id);
     }
 
     // Add edges to network for drawing
@@ -155,7 +156,7 @@ function reset_color_for_selected_nodes(selected_node_ids)
     selected_node_ids = [];
 }
 
-function highlight_selected_node_and_following_node(id, selected_node_ids, selected_node_colour, adj_node_colour)
+function highlight_selected_node_and_following_nodes(id, selected_node_ids, selected_node_colour, adj_node_colour)
 {
     //reset_color_for_selected_nodes(selected_node_ids);
     reset_color_for_all_selected_nodes_and_tds();
@@ -175,6 +176,30 @@ function highlight_selected_node_and_following_node(id, selected_node_ids, selec
     }
 }
 
+function highlight_selected_node_and_follower_nodes(id, selected_node_ids, selected_node_colour, adj_node_colour)
+{
+    //reset_color_for_selected_nodes(selected_node_ids);
+    reset_color_for_all_selected_nodes_and_tds();
+
+    // Highlight new selected nodes
+    global_nodes.update([{id:id, color:{background:selected_node_colour}}]);
+    selected_node_ids.push(id);
+
+    id_idx = sample_data_network.id_list.indexOf(id);
+
+    folowing_list = global_id_data_set[id_idx][1]; // following id list
+
+    for (following_relation of sample_data_network.following_list)
+    {
+        console.log(following_relation[0] + ', ' + following_relation[1]);
+        if (id == following_relation[1])
+        {
+          global_nodes.update([{id:following_relation[0], color:{background:adj_node_colour}}]); 
+          selected_node_ids.push(following_relation[0]);
+        }
+    }
+}
+
 /*
  * select_table
  *
@@ -190,18 +215,19 @@ function select_id_table(event)
             && target_elem.tagName === 'TD')
     {
         id = parseInt(target_elem.innerHTML);
-        highlight_selected_node_and_following_node
-        (
-            id, 
-            selected_and_following_node_ids, 
-            SELECTED_NODE_FOR_FOLLOWING_COLOUR,
-            FOLLOWING_NODE_COLOUR
-        );
+        highlight_selected_node_and_follower_nodes
+          (
+              id, 
+              selected_and_following_node_ids, 
+              SELECTED_NODE_FOR_FOLLOWER_COLOUR,
+              FOLLOWER_NODE_COLOUR
+          );
 
         if (selected_id_table_id_elem != null)
             selected_id_table_id_elem.removeAttribute('bgColor');
 
-        target_elem.setAttribute('bgColor', SELECTED_NODE_FOR_FOLLOWING_COLOUR);
+        // set table cel colour
+        target_elem.setAttribute('bgColor', SELECTED_NODE_FOR_FOLLOWER_COLOUR);
 
         selected_id_table_id_elem = target_elem;
     }
@@ -242,20 +268,31 @@ function select_tag_table(event)
 
 function click_node_handler()
 {
-    network.on('click', function(properties) {
+    network.on('click', function(properties) 
+    {
         let ids = properties.nodes;
-        let clicked_nodes = global_nodes.get(ids);
 
-        console.log('clicked nodes:', clicked_nodes);
+        if (ids.length === 0)
+        {
+            // deselecting nodes will reset collours to all selected nodes and table cells
+            reset_color_for_all_selected_nodes_and_tds();
+        }
+        else
+        {
+            // highlight selected node and its followers
+            let clicked_nodes = global_nodes.get(ids);
 
-        for (i = 0; i < clicked_nodes.length; i++)
-          highlight_selected_node_and_following_node
-          (
-              clicked_nodes[i].id, 
-              selected_and_follower_node_ids, 
-              SELECTED_NODE_FOR_FOLLOWER_COLOUR,
-              FOLLOWER_NODE_COLOUR
-          );
+            console.log('clicked nodes:', clicked_nodes);
+
+            for (i = 0; i < clicked_nodes.length; i++)
+              highlight_selected_node_and_following_nodes
+              (
+                  clicked_nodes[i].id, 
+                  selected_and_following_node_ids, 
+                  SELECTED_NODE_FOR_FOLLOWING_COLOUR,
+                  FOLLOWING_NODE_COLOUR
+              );
+        }
     });
 }
 

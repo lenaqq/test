@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" type="text/css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.foundation.min.css" type="text/css" />
 
+    <link rel="stylesheet" href="netvis.css" type="text/css" />
+
     <script src="jslib/foundation-6.4.1-complete/js/vendor/jquery.js"></script>
     <script src="jslib/foundation-6.4.1-complete/js/vendor/what-input.js"></script>
     <script src="jslib/foundation-6.4.1-complete/js/vendor/foundation.js"></script>
@@ -31,61 +33,6 @@
     <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>     
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.foundation.min.js"></script>
 
-    <style type="text/css">
-        body {
-          //background-color: #378DB2;
-        }
-        #twitter_network {
-          width: 100%;
-          height: 900px;
-          border: 1px solid lightgray;
-        }
-
-        .full-width {
-          width: 98%;
-          max-width: 98%;
-        }
-
-        .grid-padding-x {
-          padding-left: 2px;
-          padding-right: 2px;
-        }
-
-        .div-border {
-          border: 0px solid black;
-          background-color: #C7FFFF;
-            padding: 10px;
-        }
-
-        .round-corner {
-          border-radius: 25px;
-        }
-
-        #title {
-          height: 80px;
-          background: #C7FFFF; /* For browsers that do not support gradients */
-          background: linear-gradient(#C7FFFF, #378DB2); /* Standard syntax (must be last) */
-          background-color: #C7FFFF;
-          text-align: center;
-          color: #162C52;
-        }
-
-        .sidebutton {
-          display: block;
-          width: 250px;
-          height: 50px;
-        }
-
-        .toolbar_id_table {
-          float: left;
-        }
-
-
-        .toolbar_tag_table {
-          float: left;
-        }
-
-    </style>
   </head>
 
 <body>
@@ -124,74 +71,12 @@
           </div>
         </div>        
       </div>
-
-      <!-- Text area row for debugging messages -->
-      <!--div class="grid-x grid-padding-x"  >
-        <div class="large-6 medium-6 cell div-border">
-          <div class="primary callout"> 
-            <textarea id="demo-callback" rows="10">
-            </textarea>
-          </div>
-        </div>
-
-        <div class="large-6  medium-6 cell div-border">
-          <div class="primary callout"> 
-            <svg width="100%" height="300px">
-              <circle cx="50" cy="50" r="40"
-                stroke="green" stroke-width="4" fill="yellow" />
-                Sorry, your browser does not support inline SVG.
-            </svg>              
-          </div>
-        </div>
-        <div class="large-6 medium-6 cell div-border">
-          <div class="primary callout">           
-            <h1>This is fetched using promises.</h1>
-            <div id="demo-promise">
-            </div>
-          </div>
-        </div>
-      </div -->
-
-      <!-- SVG, Canvas row -->
-      <!--div class="grid-x grid-padding-x">
-        <div class="large-6  medium-6 cell div-border">
-          <div class="primary callout"> 
-            <svg width="100" height="100">
-              <circle cx="50" cy="50" r="40"
-                stroke="green" stroke-width="4" fill="yellow" />
-                Sorry, your browser does not support inline SVG.
-            </svg>              
-          </div>
-        </div>
-        <div class="large-6 medium-6 cell div-border">
-          <div class="primary callout">         
-            second box
-            <canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
-            Your browser does not support the HTML5 canvas tag.</canvas>
-
-            <script>
-              var c = document.getElementById("myCanvas");
-              var ctx = c.getContext("2d");
-              ctx.beginPath();
-              ctx.arc(95,50,40,0,2*Math.PI);
-              ctx.stroke();
-            </script>       
-          </div>
-        </div>
-      </div -->   
-
     </div>
 
-    <script src="event_handlers.js"></script>
-
-<script type="text/javascript">
-
-    /* Variable Declarations */
-    let sample_data_network = { id_list: [], following_list: [] };
-    let global_nodes = new vis.DataSet();
-    let global_edges = new vis.DataSet();
+<script>
 
     const NODE_COLOUR                         = '#EAE7E4';
+    const ADDED_NODE_COLOUR                   = '#33BBAA';
     const SELECTED_NODE_FOR_FOLLOWING_COLOUR  = '#33BBAA';
     const SELECTED_NODE_FOR_FOLLOWER_COLOUR   = '#33AF00';
     const SELECTED_NODE_COLOUR                = '#33AFAA';
@@ -199,6 +84,17 @@
     const FOLLOWING_NODE_COLOUR               = '#E8C7BE';
     const FOLLOWER_NODE_COLOUR                = '#770000';
     const EDGE_COLOUR                         = '#9193FF';
+
+</script>
+
+<script src="event_handlers.js"></script>
+
+<script type="text/javascript">
+
+    /* Variable Declarations */
+    let sample_data_network = { id_list: [], following_list: [] };
+    let global_nodes = new vis.DataSet();
+    let global_edges = new vis.DataSet();
 
     /*
      * Create network using Vis.js

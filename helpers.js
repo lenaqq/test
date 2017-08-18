@@ -1,4 +1,5 @@
-    const return_chars = '&#13;&#10;';
+  
+    const RETURN_CHARS = '&#13;&#10;';
 	    
   	let tag_list;
   	let unique_tag_list;
@@ -99,6 +100,18 @@
         }
     }
 
+    function addNodeWithColor(nodes, node_id, color) {
+        try {
+            nodes.add({
+                id: node_id,
+                label: node_id.toString(),
+                color: color
+            });
+        }
+        catch (err) {
+            alert(err);
+        }
+    }
     function addEdgeArrow(edges, node_from, node_to) {
         try {
             edges.add({
@@ -253,7 +266,7 @@ function print_list(title, data_list)
 	{
 		text_elem = document.getElementById("demo-callback");
 		
-		text_elem.innerHTML += return_chars + title + ': (' + data_list.length + ')' + return_chars + '[';
+		text_elem.innerHTML += RETURN_CHARS + title + ': (' + data_list.length + ')' + RETURN_CHARS + '[';
 
 		for (i = 0; i < data_list.length; i++) 
 		{
@@ -279,9 +292,9 @@ function print_list(title, data_list)
 			if ((i + 1) < data_list.length)
 				 text_elem.innerHTML += ','
 		}
-		text_elem.innerHTML += ']' + return_chars;
+		text_elem.innerHTML += ']' + RETURN_CHARS;
 
-		// text_elem.innerHTML += 'JSON' + return_chars + JSON.stringify(data_list);
+		// text_elem.innerHTML += 'JSON' + RETURN_CHARS + JSON.stringify(data_list);
 	}
 	catch (err)
 	{
