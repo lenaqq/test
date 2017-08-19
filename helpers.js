@@ -1,35 +1,8 @@
   
     const RETURN_CHARS = '&#13;&#10;';
 	    
-  	let tag_list;
-  	let unique_tag_list;
-  	let tag_count_list;
-    let tag_ref_id_list;
     let global_id_data_set;
     let global_tag_data_set;
-
-    /*
-     * Twitter data fetching functions
-     */
-    function get_sample_data_following_list() 
-    {
-        let following_list;
-
-        store.sample(function(sampleData) {
-            following_list = sampleData;
-        });
-        
-        return following_list;
-    }
-
-    function get_sample_data(following_list) 
-    {
-        store.sample(function(sampleData) 
-        {
-              following_list = sampleData;
-        });
-    }
-
 
     function get_tag_list(id_list) 
     {
@@ -126,44 +99,6 @@
         }
     }
 
-    /*
-     * find_following_ids_and_tags
-     *
-     * construct data set: [ [1, [4, 3, 6]], [3, [1, 2]], [5, []]]
-     *
-     * Params:
-     *    network       containing id_list and following list
-     *    id_tag_list   list of tags corresponding to the ids, fetched by get_tag_list() or store.tags()
-     */
-    function find_following_ids_and_tags(network, id_tag_list)
-    {
-        let id_list = network.id_list;
-        let following_list = network.following_list;
-        let data_set = [];
-
-        for (i = 0; i < id_list.length; i++)
-        {
-            id = id_list[i];
-            id_folowing_list = [];
-
-            for (following_idx = 0; following_idx < following_list.length; following_idx++)
-            {
-                if (id === following_list[following_idx][0])   // compare 'from id'
-                {
-                    id_folowing_list.push(following_list[following_idx][1]); // add 'to id'
-                }
-            }
-
-            data = [ id, id_folowing_list, id_tag_list[i] ];
-            data_set.push(data);
-
-            //id_table.row.add(data);
-        }
-
-        //id_table.draw();
-        return data_set;
-
-    }
 /*
  * build_id_list(following_list)
  *
@@ -314,13 +249,13 @@ function print_lists_to_var()
     text_elem.innerHTML += '[' + RETURN_CHARS;
 
     // id_list
-    text_elem.innerHTML += '[' + sample_data_network.id_list.join(', ') + ']';
+    text_elem.innerHTML += '[' + twitter.data.id_list.join(', ') + ']';
     text_elem.innerHTML += ',' + RETURN_CHARS;
 
     // following list
     text_elem.innerHTML += '[' + RETURN_CHARS;
 
-    for (data of sample_data_network.following_list) 
+    for (data of twitter.data.following_list) 
         text_elem.innerHTML += '[' + data.join(', ') + '],';
 
     text_elem.innerHTML = text_elem.innerHTML.slice(1, text_elem.innerHTML.length - 1) + '],' + RETURN_CHARS;
@@ -335,7 +270,7 @@ function print_lists_to_var()
     }
     */
 
-    text_elem.innerHTML += JSON.stringify(id_tag_list);
+    text_elem.innerHTML += JSON.stringify(twitter.data.id_tag_list);
 
     text_elem.innerHTML += RETURN_CHARS;
     text_elem.innerHTML += '];' + RETURN_CHARS;

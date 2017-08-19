@@ -90,11 +90,11 @@
         <!-- Table row -->
         <div class="large-4 medium-4">
           <div class="primary callout round-corner"> 
-            <table id="id_table" class="display" width="100%" onclick="select_id_table(event)"></table>
+            <table id="id_table" class="display" width="100%" onclick="select_id_table_handler(event)"></table>
           </div>
 
           <div class="primary callout round-corner">           
-            <table id="tag_table" class="display" width="100%" onclick="select_tag_table(event)"></table>
+            <table id="tag_table" class="display" width="100%" onclick="select_tag_table_handler(event)"></table>
           </div>
         </div>        
       </div>
@@ -119,7 +119,7 @@
 <script type="text/javascript">
 
     /* Variable Declarations */
-    let sample_data_network = { id_list: [], following_list: [] };
+    let twitter.data = { id_list: [], following_list: [] };
     let global_nodes = new vis.DataSet();
     let global_edges = new vis.DataSet();
 
