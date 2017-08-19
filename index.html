@@ -4,7 +4,7 @@
   </head>
   <body>
     <h1>This is fetched using callbacks.</h1>
-    <div id="demo-callback">
+    <div id="logs">
     </div>
     <h1>This is fetched using promises.</h1>
     <div id="demo-promise">
@@ -15,7 +15,7 @@
         store.tags(
           sampleData[0],
           function(tagData) {
-            document.getElementById('demo-callback').innerHTML =
+            document.getElementById('logs').innerHTML =
               '<h3>Sample</h3>'
               + JSON.stringify(sampleData)
               + '<h3>Tags for the first two people</h3>'

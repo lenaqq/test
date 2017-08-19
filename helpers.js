@@ -6,6 +6,7 @@
   	let tag_count_list;
     let tag_ref_id_list;
     let global_id_data_set;
+    let global_tag_data_set;
 
     /*
      * Twitter data fetching functions
@@ -69,7 +70,7 @@
         store.tags(
           sampleData[0],
           function(tagData) {
-            document.getElementById('demo-callback').innerHTML +=
+            document.getElementById('logs').innerHTML +=
               '<h3>Sample</h3>'
               + JSON.stringify(sampleData)
               + '<h3>Tags for the first two people</h3>'
@@ -264,7 +265,7 @@ function print_list(title, data_list)
 {
 	try
 	{
-		text_elem = document.getElementById("demo-callback");
+		text_elem = document.getElementById("logs");
 		
 		text_elem.innerHTML += RETURN_CHARS + title + ': (' + data_list.length + ')' + RETURN_CHARS + '[';
 
@@ -286,7 +287,10 @@ function print_list(title, data_list)
 			}
 			else 
 			{
-				text_elem.innerHTML += data_list[i];
+          if (typeof data_list[i] === 'Array')
+				    text_elem.innerHTML += '[' + data_list[i] + ']';
+          else
+            text_elem.innerHTML += data_list[i];
 			}
 			
 			if ((i + 1) < data_list.length)
@@ -300,10 +304,42 @@ function print_list(title, data_list)
 	{
 		alert(err);
 	}
- 
-	//ocument.getElementById('demo-callback').innerHTML += json_str;
+}
 
-    //build_id_list(JSON.stringify(sampleData));
+function print_lists_to_var() 
+{
+    text_elem = document.getElementById("logs");
+    text_elem.innerHTML += RETURN_CHARS + RETURN_CHARS + 'var test_samples = ' + RETURN_CHARS;
+
+    text_elem.innerHTML += '[' + RETURN_CHARS;
+
+    // id_list
+    text_elem.innerHTML += '[' + sample_data_network.id_list.join(', ') + ']';
+    text_elem.innerHTML += ',' + RETURN_CHARS;
+
+    // following list
+    text_elem.innerHTML += '[' + RETURN_CHARS;
+
+    for (data of sample_data_network.following_list) 
+        text_elem.innerHTML += '[' + data.join(', ') + '],';
+
+    text_elem.innerHTML = text_elem.innerHTML.slice(1, text_elem.innerHTML.length - 1) + '],' + RETURN_CHARS;
+
+    // tag list
+    /*
+    text_elem.innerHTML += '[' + RETURN_CHARS;    
+    for (data of id_tag_list) 
+    {
+        str_data = data.map( function(x) { return '"' + x.toString() + '"'; });
+        text_elem.innerHTML += '[' + str_data.join(', ') + '],';
+    }
+    */
+
+    text_elem.innerHTML += JSON.stringify(id_tag_list);
+
+    text_elem.innerHTML += RETURN_CHARS;
+    text_elem.innerHTML += '];' + RETURN_CHARS;
+
 }
 
 /*

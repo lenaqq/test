@@ -114,8 +114,9 @@ function add_network_handler()
     $('#statpanel-1').attr('style', 'visibility:visible');
 
     max_id_following_pair_list = find_most_following_id();
+    ids = max_id_following_pair_list[0].join(', ');
 
-    $('#most_following_id').html(max_id_following_pair_list[0].toString());
+    $('#most_following_id').html(ids.toString()); 
     $('#num_followings').html(max_id_following_pair_list[1].toString());
     $('#statpanel-2').attr('style', 'visibility:visible');
 
@@ -195,6 +196,12 @@ function clear_network_handler()
     $('#statpanel-1').attr('style', 'visibility:hidden');
     $('#statpanel-2').attr('style', 'visibility:hidden');
 
+
+    text_elem = document.getElementById("logs");
+    text_elem.innerHTML = '';
+    sample_data_network.id_list = [];
+    sample_data_network.following_list = [];    
+
 }
 
 function reset_color_for_selected_nodes(selected_node_ids)
@@ -202,7 +209,7 @@ function reset_color_for_selected_nodes(selected_node_ids)
     for (i = 0; i < selected_node_ids.length; i++)
     { 
         node_id = selected_node_ids[i];
-        console.log('remove ' + node_id);
+        // console.log('remove ' + node_id);
         global_nodes.update([{id:node_id, color:{background:NODE_COLOUR}}]);
     }
 
@@ -307,7 +314,7 @@ function find_most_following_id()
 
         for (following_relation of sample_data_network.following_list)
         {
-            console.log(following_relation[0] + ', ' + following_relation[1]);
+            // console.log(following_relation[0] + ', ' + following_relation[1]);
             if (id == following_relation[0])
             {
                 id_following_count++;
@@ -446,4 +453,138 @@ function print_data_handler()
     print_list("ID's TAG LIST", id_tag_list);
     print_list('UNIQUE TAG LIST', unique_tag_list);
     print_list('TAG COUNT LIST', tag_count_list);
+
+    text_elem.innerHTML += RETURN_CHARS + 'Id TABLE: ' + RETURN_CHARS + JSON.stringify(global_id_data_set);
+    text_elem.innerHTML += RETURN_CHARS + 'Tag TABLE: ' + RETURN_CHARS + JSON.stringify(global_tag_data_set);
+
+    print_lists_to_var();
+
+  }
+
+function test_handler()
+{
+    // alert("add_network_handler");
+    // get sample data from test_samples
+    let new_following_list = test_samples[1];
+    id_tag_list = test_samples[2];
+
+    sample_data_network.id_list = [];
+    sample_data_network.following_list = [];
+
+    //get_sample_data(sample_data_network);
+    //new_following_list = get_sample_data_following_list();
+    new_id_list = build_id_list
+                  (
+                      new_following_list, 
+                      sample_data_network.id_list
+                  );
+    
+    sample_id_list = test_samples[0];
+
+    if (new_id_list.length != sample_id_list.length || new_id_list.every((v,i)=> v != sample_id_list[i]))
+    {
+        alert("build_id_list() returns different id list from test_samples's id list.");
+        return;
+    }
+        
+    // Add nodes to network for network view
+    for (id of new_id_list)
+    {
+        addNodeWithColor(global_nodes, id, ADDED_NODE_COLOUR);
+        selected_and_following_node_ids.push(id);
+    }
+
+    // Add edges to network for drawing
+    for (let i = 0; i < new_following_list.length; i++)
+    {
+        if (sample_data_network.following_list.indexOf(new_following_list[i]) < 0)
+        { 
+            // add edge arrow and add following relation to sample_data_network.following_list
+            addEdgeArrow
+            (
+                global_edges,
+                new_following_list[i][0],         // from node
+                new_following_list[i][1]          // to node
+            );
+            sample_data_network.following_list.push(new_following_list[i]);
+        }
+    }
+    network.fit();
+
+    // update global network data
+    sample_data_network.id_list = sample_data_network.id_list.concat(new_id_list);
+
+    unique_tag_list = build_unique_tag_list(id_tag_list).sort();
+
+    tags_count = unique_tag_list.length;
+
+    // create tag_count_list with same length as unique_tag_list
+    tag_count_list = Array(tags_count);
+    tag_count_list.fill(0);
+    tag_ref_id_list = Array(tags_count);
+
+    for (i = 0; i < tags_count; i++)
+        tag_ref_id_list[i] = [];
+
+    //tag_ref_id_list.fill(Array()); does not work
+
+    count_tags(sample_data_network.id_list, id_tag_list, unique_tag_list, tag_count_list, tag_ref_id_list);
+
+    let zip = (a1, a2, a3) => a1.map((x, i) => [x, a2[i], a3[i]]);
+    
+    global_tag_data_set = zip(unique_tag_list, tag_count_list, tag_ref_id_list);
+    
+    global_id_data_set = find_following_ids_and_tags(sample_data_network, id_tag_list);
+
+    /*
+     * Update view
+     */
+    $('#id_table').DataTable( {
+        data: global_id_data_set,
+        columns: [
+                    { title: "Id" },
+                    { title: "Following Ids" },
+                    { title: "Tags" }
+                ],
+        destroy: true,
+        scrollY: "300px",
+        //scrollCollapse: true,
+        paging:         false,
+        "dom": '<"toolbar_id_table">frtip'        
+      } );
+    $("div.toolbar_id_table").html('<b>Id Table</b>');   
+
+    $('#tag_table').DataTable( {
+        data: global_tag_data_set,
+        columns: [
+                  { title: "Tag" },
+                  { title: "Frequency" },
+                  { title: "Referred Ids" },
+              ],
+        destroy: true,
+        scrollY: "300px",
+        //scrollCollapse: true,
+        paging:         false,
+        "dom": '<"toolbar_tag_table">frtip'
+    } );
+
+    $("div.toolbar_tag_table").html('<b>Tag Table</b>');   
+
+    $('#num_ids').html(sample_data_network.id_list.length.toString());
+    $('#num_edges').html(sample_data_network.following_list.length.toString());
+    $('#num_tags').html(unique_tag_list.length.toString());
+
+    max_id_follower_pair_list = find_most_followed_id();
+    ids = max_id_follower_pair_list[0].join(', ');
+
+    $('#most_followed_id').html(ids.toString());
+    $('#num_followers').html(max_id_follower_pair_list[1].toString());
+    $('#statpanel-1').attr('style', 'visibility:visible');
+
+    max_id_following_pair_list = find_most_following_id();
+    ids = max_id_following_pair_list[0].join(', ');
+
+    $('#most_following_id').html(ids.toString());
+    $('#num_followings').html(max_id_following_pair_list[1].toString());
+    $('#statpanel-2').attr('style', 'visibility:visible');
 }
