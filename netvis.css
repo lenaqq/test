@@ -1,0 +1,73 @@
+/* 
+ * Stylesheet for Network Visualization Tool
+ */
+#title {  /* Page title */
+    height: 80px;
+    background: #C7FFFF; /* For browsers that do not support gradients */
+    background: linear-gradient(#C7FFFF, #378DB2); /* Standard syntax (must be last) */
+    background-color: #C7FFFF;
+    text-align: center;
+    color: #162C52;
+}
+
+#twitter_network {
+    width: 100%;
+    height: 900px;
+    border: 1px solid lightgray;
+}
+
+.full-width {
+    width: 98%;
+    max-width: 98%;
+}
+
+.grid-padding-x {
+    padding-left: 6px;
+    padding-right: 0px;
+}
+
+.div-border {
+    border: 1px solid black;
+    background-color: #C7FFFF;
+    padding-top: 10px;
+}
+
+.round-corner {
+    border-radius: 25px;
+}
+
+.sidebutton {
+    height: 50px;
+    padding-top: 10px;
+    padding-left: 2px;
+}
+
+.sidepanel {
+    padding-top: 10px;
+    padding-left: 6px;
+    width: 105%;
+    border: 0px solid black;
+    background-color: #C7FFFF;    
+}
+
+.statpanel-1 {
+    visibility: hidden;
+}
+
+.statpanel-2 {
+    visibility: hidden;
+}
+
+button {
+    width: 105% !important;
+}
+
+/* id_table title */
+.toolbar_id_table { 
+  float: left;
+}
+
+/* tag_table title */
+.toolbar_tag_table {
+  float: left;
+}
