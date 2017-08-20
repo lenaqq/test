@@ -1,103 +1,46 @@
   
-    const RETURN_CHARS = '&#13;&#10;';
-	    
-    let global_id_data_set;
-    let global_tag_data_set;
+let global_id_data_set;
+let global_tag_data_set;
 
-    function get_tag_list(id_list) 
-    {
-    	let tag_list = [];
-
-        store.tags(
-        	id_list,
-          	function(tagData) {
-            	tag_list = tagData;
-          	},
-          	function(error) {
-            // No error is gonna happen.
-          	}
-        );
-
-        return tag_list;
+/*
+ * Graph data construction functions
+ */
+function addNode(nodes, node_id) {
+    try {
+        nodes.add({
+            id: node_id,
+            label: node_id.toString()
+        });
     }
-
-    function fetch_sample_promise() {
-
-      store.sample().then(function(sampleData) {
-        store.tags(sampleData[0]).then(
-          function(tagData) {
-            document.getElementById('demo-promise').innerHTML =
-              '<h3>Sample</h3>'
-              + JSON.stringify(sampleData)
-              + '<h3>Tags for the first two people</h3>'
-              + JSON.stringify(tagData);
-          },
-          function(error) {
-            // No error is gonna happen.
-          });
-      });
+    catch (err) {
+        alert(err);
     }
+}
 
-    function fetch_sample_callback(network) {
-      store.sample(function(sampleData) {
-        store.tags(
-          sampleData[0],
-          function(tagData) {
-            document.getElementById('logs').innerHTML +=
-              '<h3>Sample</h3>'
-              + JSON.stringify(sampleData)
-              + '<h3>Tags for the first two people</h3>'
-              + JSON.stringify(tagData);
-              
-              network.id_list = build_id_list(sampleData);
-              network.following_list = sampleData;
-          },
-          function(error) {
-            // No error is gonna happen but this function must be provided.
-          }
-        );
-      });
+function addNodeWithColor(nodes, node_id, color) {
+    try {
+        nodes.add({
+            id: node_id,
+            label: node_id.toString(),
+            color: color
+        });
     }
-
-    /*
-     * Graph data construction functions
-     */
-    function addNode(nodes, node_id) {
-        try {
-            nodes.add({
-                id: node_id,
-                label: node_id.toString()
-            });
-        }
-        catch (err) {
-            alert(err);
-        }
+    catch (err) {
+        alert(err);
     }
-
-    function addNodeWithColor(nodes, node_id, color) {
-        try {
-            nodes.add({
-                id: node_id,
-                label: node_id.toString(),
-                color: color
-            });
-        }
-        catch (err) {
-            alert(err);
-        }
+}
+function addEdgeArrow(edges, node_from, node_to) {
+    try {
+        edges.add({
+            from: node_from,
+            to: node_to,
+            arrows: 'to'
+        });
     }
-    function addEdgeArrow(edges, node_from, node_to) {
-        try {
-            edges.add({
-                from: node_from,
-                to: node_to,
-                arrows: 'to'
-            });
-        }
-        catch (err) {
-            alert(err);
-        }
+    catch (err) {
+        alert(err);
     }
+}
 
 /*
  * build_id_list(following_list)
@@ -175,23 +118,6 @@ function count_tags(id_list, tag_list, unique_tag_list, tag_count_list, tag_ref_
 		}
 	}
 }
-/*
-function build_unique_tag_list(tag_list)
-{
-	let unique_tag_list = [];
-
-	for (i = 0; i < tag_list.length; i++)
-	{
-		let a = new Set(unique_tag_list);
-		let b = new Set(tag_list[i]);
-
-		union = new Set([...a, ...b]);
-		unique_tag_list = Array.from(union);
-	}
-
-	return unique_tag_list;
-}
-*/
 
 /*
  * print_list
@@ -260,16 +186,6 @@ function print_lists_to_var()
 
     text_elem.innerHTML = text_elem.innerHTML.slice(1, text_elem.innerHTML.length - 1) + '],' + RETURN_CHARS;
 
-    // tag list
-    /*
-    text_elem.innerHTML += '[' + RETURN_CHARS;    
-    for (data of id_tag_list) 
-    {
-        str_data = data.map( function(x) { return '"' + x.toString() + '"'; });
-        text_elem.innerHTML += '[' + str_data.join(', ') + '],';
-    }
-    */
-
     text_elem.innerHTML += JSON.stringify(twitter.data.id_tag_list);
 
     text_elem.innerHTML += RETURN_CHARS;
@@ -277,19 +193,41 @@ function print_lists_to_var()
 
 }
 
-/*
-function get_tags(id_list) {
-        store.tags(sampleData[0]).then(
-          function(tagData) {
-            document.getElementById('demo-promise').innerHTML =
-              '<h3>Sample</h3>'
-              + JSON.stringify(sampleData)
-              + '<h3>Tags for the first two people</h3>'
-              + JSON.stringify(tagData);
-          },
-          function(error) {
-            // No error is gonna happen.
-          });
-	store.tags(id_list, )
+function fetch_sample_promise() {
+
+  store.sample().then(function(sampleData) {
+    store.tags(sampleData[0]).then(
+      function(tagData) {
+        document.getElementById('demo-promise').innerHTML =
+          '<h3>Sample</h3>'
+          + JSON.stringify(sampleData)
+          + '<h3>Tags for the first two people</h3>'
+          + JSON.stringify(tagData);
+      },
+      function(error) {
+        // No error is gonna happen.
+      });
+  });
 }
-*/
+
+function fetch_sample_callback(network) {
+  store.sample(function(sampleData) {
+    store.tags(
+      sampleData[0],
+      function(tagData) {
+        document.getElementById('logs').innerHTML +=
+          '<h3>Sample</h3>'
+          + JSON.stringify(sampleData)
+          + '<h3>Tags for the first two people</h3>'
+          + JSON.stringify(tagData);
+          
+          network.id_list = build_id_list(sampleData);
+          network.following_list = sampleData;
+      },
+      function(error) {
+        // No error is gonna happen but this function must be provided.
+      }
+    );
+  });
+}
+
