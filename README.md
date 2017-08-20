@@ -1,11 +1,16 @@
 # Social Network Visualisation 
 
-This web application visualises a small social network using some Twitter data. 
+SNetVis is a Social Network Visualisation web application for a small social network using some Twitter data. 
 
 ## Requirement
+### Environment
 Google Chrome Version 60.0.3112.101
+### How to run the web application
+* Type index.html 
+* Check the Web Page Layout and User Interactions sections for more details of operations of the application.
 
-## Web Page Layout
+## GUI
+### Web Page Layout
 The layout of the web pages consists of four regions:
 * Command list on the left: 
   * **Add**: Add ten following relationships to the network and associated tags;
@@ -17,7 +22,7 @@ The layout of the web pages consists of four regions:
 * Two tables on the right: Top table showing the people's ids, following ids and associated tags while the bottom table showing the tags, frequencies, and ids referred to the corresponding tags.
 * Statistic panel on the left: shows total numbers of Ids, Relationships, tags, and the ids have most followers and ids has most followings.
 
-## User Interactions
+### User Interactions
 When Add button or Test button is clicked, the network of nodes and their relations will be displayed. The newly added nodes will be in dark green. You can do any of the following actions with mouse's scrolling wheal and the left button:
 * Zoom in and out of the network view by mouse scroll wheel;
 * Pan the network view by pressing mouse button and drag;
@@ -31,28 +36,87 @@ When Add button or Test button is clicked, the network of nodes and their relati
 * Sort Tags by clicking Tag column of the Tag Table;
 * Sort Tag Frequency by clicking Fruequency column of the Tag Table;
 
+# Design
+## Classes
+Main classes are defined as below and an instance of the SocialNetwork is created for twitter.
+
+```javascript
+class NetworkData
+    Contains data for id_list, following_list, tag_list, and house keeping variables and data related functions.
+
+class NetworkView
+    Contains all house keeping data for selected nodes and their followers and followings, tables, statistic panel, except network, to tables and statistics in HTML document. 
+
+class VisNetworkView extends NetworkView       // using Vis.js. Ut could use different network display model
+    Contains network build by nodes and edges using vis.DataSet() and vis.Network() and all data from base class NetworkView.
+
+class SocialNetwork
+    Contains NetworkData and VisNetworkView;
+
+Create Twitter network:
+    twitter = new SocialNetwork();
+
+```
+
+## Design Notes
+* In a real social network which has more information about people and their relationships, a more general class of **NetworkData** can be defined to include **People** and **Relationships**. While the class **Person** has id, name, age, id photo, birth place, etc, and the class **Relationship** can be defined with 1:1 or 1:m relationships. When visualising the network, people's photos can be displayed, or people can be grouped and viewed based on the age, birth place, even by the skin colour using the id photos. Thus, more interesting features can be discovered and studied.
+
+* **VisNetworkView** can be configured using Vis's options. Multiple views can be designed to display the network in different ways such as different node shapes, different colours, different interactions and using different physics models. Multiple views can be displayed as a full view for each tab. Or multiple view are display at the same time by tiled layout.
+
+* When there are many nodes on the network view, selecting a node and its adjacent nodes for following or follower nodes might be difficult to standout these nodes although their colour have been changed. One solution is to popup a small window to display only the selected node and its adjacent nodes in a circular layout.
+
+* When zoom in and out, it is a best to have a small window at the corner of the network view to show the relative view port to the Canvas for the whole network.
+
 ## Implementation
 ### Vis.js
-I have used Vis.js (version 4) to visualise networks. It is powerfull and easy to use. The network can handle a few thousand nodes and edges smoothly on any modern browser for up to using clustering. Network uses HTML canvas for rendering. 
+Vis.js (version 4) is used for visualising the networks (http://visjs.org). This is powerful tool for 2D/3D graphs, timelines, and especially for network. It handles large amounts of dynamic data and the interaction with the data. It is easy to use. The network can handle a few thousand nodes and edges smoothly on any modern browser for up to using clustering. Network uses HTML canvas for rendering. 
 The default physic model used is BarnesHut, a quadtree based gravity model. This is the fastest, default and recommended solver for non-hierarchical layouts. The behaviour of the layout can be changed by configuring model's parameters such as gravity and spring properties.
+Vis.js is dual licensed under both Apache 2.0 and MIT.
 
 ### DataTable
-DataTables is a plug-in for the jQuery Javascript library, implemented by https://datatables.net/.
+DataTables is a plug-in for the jQuery Javascript library, implemented by https://datatables.net/. Tables can be scrolled in both vertical and horizontal directions.
+It is MIT licensed.  
 
 ### Foundation
+It is a responsive front-end framework for website design. Foundation's grid system is used for the web page layout.
 
-### Test
-A test file 'test_samples.js' contains sample data of following relationships and tags fetched ten times using the sample() and tag() functions. Currently. 
-The test button is used to add all the nodes obtained from the following relationships and tags.
-
-Print button can be used to flush out the id list, following list, unique tag list, etc. If you want to store the data for future test, you can copy the text starting 'var test_samples = ' and end at '];'.
+### Source Files
+* HTML file
+  * index.html
+* CSS file
+  * netvis.css
+* JavaScript files
+  * store.js (provided by Data61)
+  * network_data.js
+  * network_view.js
+  * social_network.js
+  * event_handlers.js
+  * helpers.js
+* Test file
+  * test_samples.js
+* Image file
+  * netvisicon.png
 
 ### To Do List
 * Add a overview window to show the viewport in respect of the total view
-* cursor of selected id or tag
+* Cursor of selected id or tag
 * legends of colours
 * Read test file from a dialogbox
+* Clustering for more nodes
+* Hashtables for tags
 
+## Test
+A test file 'test_samples.js' contains sample data of following relationships and tags fetched ten times using the sample() and tag() functions. Currently. 
+The **Test** button is used to add all the nodes obtained from the following relationships and tags.
+
+Print button can be used to flush out the id list, following list, unique tag list, etc. If you want to store the fetched sample data for future test, you can copy the text starting 'var test_samples = ' and end at '];', and save it to test_samples.js. At the moment, only this file is read for testing. Other files in JSON format can be implemented in future.
+
+### Performance test
+Performance test should be undertaken for large amounts of nodes. Auto adjustment of the parameters of the physics model based on the number of nodes in the network might be investigated to find best performance for network layout. 
+
+# Coding Task (from Alex)
+
+The goal is to create a web application that visualises a small social network using some Twitter data.
 
 ## Data
 
@@ -97,25 +161,6 @@ We have prepared two simple functions for you to access the data. They are conta
      * @param {function} [failureFn] - The optional callback function for error handling.
      */
     function tags(ids, sucessFn, failureFn)
-
-# Design
-## Classes
-```javascript
-class NetworkData
-
-class NetworkView
-
-class VisNetworkView extends NetworkView       // using Vis.js. Ut could use different network display model
-
-class SocialNetwork
-{
-    constructor()
-    {
-       this.data = new NetworkData();
-       this.view = new VisNetworkView();
-    }
-}
-```
 
 ## Environment
 
