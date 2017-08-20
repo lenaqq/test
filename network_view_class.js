@@ -22,7 +22,7 @@ class NetworkView
         this.selected_tag_table_id_elem = null;      
     }
 
-    update_tables_and_stats(network_data, global_id_data_set, tag_data_set)
+    update_tables(global_id_data_set, tag_data_set)
     {
         /*
          * Update view
@@ -56,26 +56,58 @@ class NetworkView
             "dom": '<"toolbar_tag_table">frtip'
         } );
 
-        $("div.toolbar_tag_table").html('<b>Tag Table</b>');   
+        $("div.toolbar_tag_table").html('<b>Tag Table</b>');           
+    }
 
+    update_stats(network_data)
+    {
         $('#num_ids').html(network_data.id_list.length.toString());
         $('#num_edges').html(network_data.following_list.length.toString());
         $('#num_tags').html(network_data.unique_tag_list.length.toString());
 
-        let max_id_follower_pair_list = network_data.find_most_followed_id();
-        let ids = max_id_follower_pair_list[0].join(', ');
+        let max_id_follower_pair_list;
+        let max_id_following_pair_list;
+        let max_ids_followers = '';;
+        let max_ids_followings = '';
+        let num_followers = 0;
+        let num_followings = 0;
 
-        $('#most_followed_id').html(ids.toString());
-        $('#num_followers').html(max_id_follower_pair_list[1].toString());
-        $('#statpanel-1').attr('style', 'visibility:visible');
+        if (network_data.id_list.length > 0)
+        {
+            max_id_follower_pair_list = network_data.find_most_followed_id();
+            if (max_id_follower_pair_list.length > 0)
+            {
+                max_ids_followers = max_id_follower_pair_list[0].join(', ');
+                num_followers = max_id_follower_pair_list[1];
+            }
 
-        let max_id_following_pair_list = network_data.find_most_following_id();
-        ids = max_id_following_pair_list[0].join(', ');
+            max_id_following_pair_list = network_data.find_most_following_id();
+            if (max_id_following_pair_list.length > 0)
+            {
+                max_ids_followings = max_id_following_pair_list[0].join(', ');
+                num_followings = max_id_following_pair_list[1];
+            }
 
-        $('#most_following_id').html(ids.toString()); 
-        $('#num_followings').html(max_id_following_pair_list[1].toString());
-        $('#statpanel-2').attr('style', 'visibility:visible');
-    }    
+            $('#most_followed_id').html(max_ids_followers.toString());
+            $('#num_followers').html(num_followers.toString());
+            $('#statpanel-1').attr('style', 'visibility:visible');
+
+            $('#most_following_id').html(max_ids_followings.toString()); 
+            $('#num_followings').html(num_followings);
+            $('#statpanel-2').attr('style', 'visibility:visible');            
+        }
+        else
+        {
+            $('#statpanel-1').attr('style', 'visibility:hidden');
+            $('#statpanel-2').attr('style', 'visibility:hidden');
+        }
+    }   
+
+    update_tables_and_stats(network_data, global_id_data_set, tag_data_set) 
+    {
+        this.update_stats(network_data);
+        this.update_tables(global_id_data_set, tag_data_set);
+    }
 }
 
 /*
@@ -128,13 +160,17 @@ class VisNetworkView extends NetworkView
             },
             edges: {
                 color: EDGE_COLOUR
+            },
+            interaction:{
+                hover: true
             }
         };
         
         this.network = new vis.Network(container, data, this.options);
+        this.network.fit();
 
         /*
-         * Define the onclick node event handler
+         * Set onclick node event listner
          */
         this.network.on('click', function(properties) 
         {
@@ -163,6 +199,12 @@ class VisNetworkView extends NetworkView
                   );
             }
         });
+
+        this.update_tables([], []);
+        this.update_stats(twitter.data);
+
+        $("#print_data_area").attr('style', 'display:block');
+
     }
 
     add_nodes_to_view(new_id_list)

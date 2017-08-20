@@ -1,47 +1,53 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NetVis</title>
-    <link rel="icon" href="netvisicon.png">
+        <title>SNetVis</title>
+        <link rel="icon" href="netvisicon.png">
 
-    <link href="https://www.seekmedi.com/wp-content/themes/zerif-lite/css/bootstrap.css?ver=4.7.4" rel="stylesheet">
-    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
-    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+        <link href="https://www.seekmedi.com/wp-content/themes/zerif-lite/css/bootstrap.css?ver=4.7.4" rel="stylesheet">
+        <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+        <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/foundation.css">
-    <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/app.css">
-    <link rel="stylesheet" href="jslib/vis-4.20.1/dist/vis-network.min.css" type="text/css" />
+        <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/foundation.css">
+        <link rel="stylesheet" href="jslib/foundation-6.4.1-complete/css/app.css">
+        <link rel="stylesheet" href="jslib/vis-4.20.1/dist/vis-network.min.css" type="text/css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.foundation.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" type="text/css" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.foundation.min.css" type="text/css" />
 
-    <link rel="stylesheet" href="netvis.css" type="text/css" />
+        <link rel="stylesheet" href="netvis.css" type="text/css" />
 
-    <script src="jslib/foundation-6.4.1-complete/js/vendor/jquery.js"></script>
-    <script src="jslib/foundation-6.4.1-complete/js/vendor/what-input.js"></script>
-    <script src="jslib/foundation-6.4.1-complete/js/vendor/foundation.js"></script>
-    <script src="jslib/foundation-6.4.1-complete/js/app.js"></script>
-    <script src="jslib/vis-4.20.1/dist/vis.js" type="text/javascript" ></script>
+        <script src="jslib/foundation-6.4.1-complete/js/vendor/jquery.js"></script>
+        <script src="jslib/foundation-6.4.1-complete/js/vendor/what-input.js"></script>
+        <script src="jslib/foundation-6.4.1-complete/js/vendor/foundation.js"></script>
+        <script src="jslib/foundation-6.4.1-complete/js/app.js"></script>
+        <script src="jslib/vis-4.20.1/dist/vis.js" type="text/javascript" ></script>
 
-    <!--ipt src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script -->
-         
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>    
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>     
-    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.foundation.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>    
+        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>     
+        <script src="https://cdn.datatables.net/1.10.15/js/dataTables.foundation.min.js"></script>
 
-  </head>
+    </head>
 
 <body>
-
-
     <header>
     <h1 id="title">Twitter Network Visualisation</h1>
     </header>
     <div class="container.fluid full-width grid-padding-x">
+      <!--div class="grid-x grid-padding-x cell" id="print_data_area"  style="padding-left: 20px; display:none">
+        <div class="large-2 medium-2 primary callout" style="padding-left: 10px;">
+          fddfh
+        </div>
+        <div class="large-8 medium-8 primary callout" style="padding-left: 10px;">
+            <textarea id="logs" rows="10" ></textarea>
+        </div>        
+      </div -->
+
+    </div>
       <div class="grid-x grid-padding-x"  >
         <!-- network row -->
         <div class="large-8 medium-8 cell">
@@ -60,7 +66,12 @@
               <div class="sidebutton">
                   <button name="print" class="btn btn-primary" onclick="print_data_handler()">Print</button>
               </div> 
+              <div class="sidebutton">
+                  <button name="hide" class="btn btn-primary" onclick="hide_print_data_area_handler()">Hide Print</button>
+              </div> 
               &nbsp&nbsp
+
+              <!-- Stats panel -->
               <div class="sidepanel">
                 <strong>Total Number of Ids:</strong><br>
                   <span id="num_ids">0</span>
@@ -81,10 +92,9 @@
                     Id  <span id="most_following_id">333, 90780, 9780978, 89798798798, 8979</span> followed <span id="num_followings">2</span> Ids.
                   </span>
               </div>
-                <!--div class="sidebutton" style="display:none"><button name="print" class="btn btn-primary" onclick="reset_color_for_all_selected_nodes_and_tds()">Reset Color</button></div -->
-                 
             </div>
 
+            <!-- Vis network area -->
             <div class="large-11 medium-11 cell">
               <div id="twitter_network" class="primary callout round-corner"> 
               </div>
@@ -95,98 +105,42 @@
         <!-- Table row -->
         <div class="large-4 medium-4">
           <div class="primary callout round-corner"> 
-            <table id="id_table" class="display" width="100%" onclick="select_id_table_handler(event)"></table>
+            <table id="id_table" class="display" width="100%" onclick="select_id_table_handler(event)" onmouseover="change_active_colour(event)" onmouseout="change_inactive_colour(event)">
+            </table>
           </div>
-
           <div class="primary callout round-corner">           
-            <table id="tag_table" class="display" width="100%" onclick="select_tag_table_handler(event)"></table>
+            <table id="tag_table" class="display" width="100%" onclick="select_tag_table_handler(event)"
+            onmouseover="change_active_colour(event)" onmouseout="change_inactive_colour(event)">
+            </table>
           </div>
         </div>        
       </div>
 
-      <div class="grid-x grid-padding-x"  >
-        <div class="large-12 medium-12 cell div-border">
-          <div class="primary callout"> 
-            <textarea id="logs" rows="10">
-            </textarea>
-          </div>
-        </div>
+      <br>
+      <div class="grid-x grid-padding-x" id="print_data_area"  style="padding-left: 20px; display:none">
+        <!--div class="large-2 medium-2 primary callout" style="padding-left: 10px;">
+          fddfh
+        </div -->
+        <div class="large-12 medium-12 primary callout" style="padding-left: 10px;">
+        <h3>Print Data For Debugging</h3>
+            <textarea id="logs" rows="10" ></textarea>
+        </div>        
+      </div>
+
     </div>
 
+    <script src="network_data_class.js"></script>
+    <script src="network_view_class.js"></script>
+    <script src="social_network_class.js"></script>
 
-<script>
-
-    const NODE_COLOUR                         = '#EAE7E4';
-    const ADDED_NODE_COLOUR                   = '#33BBAA';
-    const SELECTED_NODE_FOR_FOLLOWING_COLOUR  = '#33BBAA';
-    const SELECTED_NODE_FOR_FOLLOWER_COLOUR   = '#33BBAA';
-    const SELECTED_NODE_COLOUR                = '#33AFAA';
-    const TAGGED_NODE_COLOUR                  = '#FFAFAA';
-    const FOLLOWING_NODE_COLOUR               = '#E8C7BE';
-    const FOLLOWER_NODE_COLOUR                = '#E8C766';
-    const EDGE_COLOUR                         = '#9193FF';
-
-    /* Variable Declarations */
-    // let twitter.data = { id_list: [], following_list: [] };
-
-
-</script>
-
-<script src="network_data_class.js"></script>
-<script src="network_view_class.js"></script>
-<script src="social_network_class.js"></script>
-
-<script src="event_handlers.js"></script>
-
-<script type="text/javascript">
-
-    twitter.view.init_view();
-
-    $('#id_table').DataTable( {
-        data: [],
-        columns: [
-                    { title: "Id" },
-                    { title: "Following Ids" },
-                    { title: "Tags" }
-                ],
-        destroy: true,
-        scrollY: "300px",
-        //scrollCollapse: true,
-        paging:         false,
-
-        "dom": '<"toolbar_id_table">frtip'
-    } );
-
-    $("div.toolbar_id_table").html('<b>Id Table</b>');
-
-    $('#tag_table').DataTable( {
-          data: [],
-          columns: [
-                    { title: "Tag" },
-                    { title: "Frequency" },
-                    { title: "Referred Ids" },
-                ],
-          destroy: true,
-          scrollY: "300px",
-          //scrollCollapse: true,
-          paging:         false,
-
-          "dom": '<"toolbar_tag_table">frtip'
-        } );
-
-        $("div.toolbar_tag_table").html('<b>Tag Table</b>');        
-
-    $('#statpanel-1').attr('style', 'visibility:hidden');
-    $('#statpanel-2').attr('style', 'visibility:hidden');
-
+    <script>
+        start_netvis();
     </script>
-    
+
     <script src="store.js"></script>       
     <script src="helpers.js"></script>   
-    
-    
+    <script src="event_handlers.js"></script>
     <script src="test_samples.js"></script>      
 
-    
-  </body>
+</body>
 </html>

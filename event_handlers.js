@@ -1,6 +1,3 @@
-
-let twitter = new SocialNetwork();
-
 /*
  * Event handlers
  */
@@ -267,16 +264,56 @@ function click_node_handler()
 
 function print_data_handler()
 {
-    print_list('ID LIST', twitter.data.id_list);
-    print_list('FOLLOWING LIST', twitter.data.following_list);
-    print_list("ID's TAG LIST", twitter.data.id_tag_list);
-    print_list('UNIQUE TAG LIST', twitter.data.unique_tag_list);
-    print_list('TAG COUNT LIST', twitter.data.tag_count_list);
+    $("#print_data_area").attr('style', 'display:block');
 
-    text_elem.innerHTML += RETURN_CHARS + 'Id TABLE: ' + RETURN_CHARS + JSON.stringify(global_id_data_set);
-    text_elem.innerHTML += RETURN_CHARS + 'Tag TABLE: ' + RETURN_CHARS + JSON.stringify(global_tag_data_set);
+    if (twitter.data.id_list.length > 0)
+    {
+        print_list('ID LIST', twitter.data.id_list);
+        print_list('FOLLOWING LIST', twitter.data.following_list);
+        print_list("ID's TAG LIST", twitter.data.id_tag_list);
+        print_list('UNIQUE TAG LIST', twitter.data.unique_tag_list);
+        print_list('TAG COUNT LIST', twitter.data.tag_count_list);
 
-    print_lists_to_var();
+        text_elem.innerHTML += RETURN_CHARS + 'Id TABLE: ' + RETURN_CHARS + JSON.stringify(global_id_data_set);
+        text_elem.innerHTML += RETURN_CHARS + 'Tag TABLE: ' + RETURN_CHARS + JSON.stringify(global_tag_data_set);
 
+        print_lists_to_var();
+    }
 }
 
+function hide_print_data_area_handler()
+{
+    $("#print_data_area").attr('style', 'display:none');
+}
+
+// Functions 
+function change_active_colour(event) 
+{
+    event_elem = event.currentTarget;
+    target_elem = event.target;
+
+    if (target_elem.parentElement.firstElementChild === target_elem
+            && target_elem.tagName === 'TD')
+    {    
+        //cell_bg_colour = target_elem.parentElement.getAttribute("bgColor");
+        if (target_elem.parentElement.className == 'even')
+            cell_bg_colour = '#F!F1F1';
+        else
+            cell_bg_colour = 'white';
+
+        target_elem.setAttribute("bgcolor", SELECTED_NODE_FOR_FOLLOWER_COLOUR);
+    }
+}
+
+function change_inactive_colour(event) 
+{
+    event_elem = event.currentTarget;
+    target_elem = event.target;
+
+    if (target_elem.parentElement.firstElementChild === target_elem
+            && target_elem.tagName === 'TD')
+    {     
+        if (cell_bg_colour != '')
+            target_elem.setAttribute("bgColor", cell_bg_colour);
+    }
+}
