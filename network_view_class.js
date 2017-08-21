@@ -203,7 +203,7 @@ class VisNetworkView extends NetworkView
         this.update_tables([], []);
         this.update_stats(twitter.data);
 
-        $("#print_data_area").attr('style', 'display:block');
+        $("#print_data_area").attr('style', 'display:none');
 
     }
 

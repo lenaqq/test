@@ -1,80 +1,90 @@
-# Social Network Visualisation 
+# Social Network Visualisation Web Application
 
 SNetVis is a Social Network Visualisation web application for a small social network using some Twitter data. 
 
-## Requirement
-### Environment
-Google Chrome Version 60.0.3112.101
-### How to run the web application
-* Type index.html 
-* Check the Web Page Layout and User Interactions sections for more details of operations of the application.
+## Environment
+Google Chrome Version 60.0.3112.101 or later. 
+This application should work in browsers with ECMAScript 2015, but it has not been tested. 
+
+## How to run the web application
+* Download the project **test** from https://github.com/lenaqq/test and unzip in your test folder, eg, 'd:/tmp/coding-test'
+* Drag the index.html to your Google Chrome browser or type 'file:///D:/tmp/coding-test/index.html' in your browser
+* Check GUI section for web page layout and user interactions.
 
 ## GUI
 ### Web Page Layout
-The layout of the web pages consists of four regions:
+<img src="netvis_layout.png" alt="Drawing" style="width: 100%" border="1px"/><br>
+The layout consists of four regions:
 * Command list on the left: 
-  * **Add**: Add ten following relationships to the network and associated tags;
+  * **Add**: Fetch ten 'following' relationships, build a new id list, and add new ids and relationships to the network. Tags for the new ids are also added. The updated network is displayed.
   * **Clear**: Clear the network to restart composing;
-  * **Test**: Read relationships and tags from a file. This is for test purpose only. It should not appeared in the released version;
-  * **Print**: Print data for debugging, for test purpose only. It should not appeared in the released version.
+  * **Test**: Read relationships and tags from a test file which can contain any number of 'following' relationships. The current test file has 63 nodes, 95 relationships and 437 tags.
+  * **Print**: Print data for debugging on a panel at the bottom (not shown in above image). This panel is displayed when the **Print** button is clicked. 
+  * **Hide Print**: Hide Print data panel. 
 
-* Network view in the middle: the main view in this web page showing the peoples ids as nodes, their following peoples and their followers represented by arrows connecting nodes. The nodes are identified by people's ids.
-* Two tables on the right: Top table showing the people's ids, following ids and associated tags while the bottom table showing the tags, frequencies, and ids referred to the corresponding tags.
-* Statistic panel on the left: shows total numbers of Ids, Relationships, tags, and the ids have most followers and ids has most followings.
+  The last three buttons in grey should not be appeared in the released version. They are for test purpose only.
+
+* Network view in the middle: the main view in this web page shows people's ids as nodes and the 'following' relationships as arrowed edges. Person A following person B is represented as an arrow from node idOfA to  node idOfB.
+* Two tables on the right: Id Table at the top shows people's ids, 'following' ids and associated tags. Tag Table at the bottom shows unique tags, frequencies (number of tags referred by people), and people's ids referred to the corresponding tags.
+* Statistic panel on the left-bottom: It shows total numbers of ids, 'following' relationships, tags, and the ids have most followers and ids have most followings.
 
 ### User Interactions
-When Add button or Test button is clicked, the network of nodes and their relations will be displayed. The newly added nodes will be in dark green. You can do any of the following actions with mouse's scrolling wheal and the left button:
-* Zoom in and out of the network view by mouse scroll wheel;
-* Pan the network view by pressing mouse button and drag;
-* Reset the nodes to creamy colour by clicking on white area (not on a node or edge); 
-* Highlight a node and its following nodes (different from the selected node) by clicking a node;
-* Relayout the network by drag a node. However, due to the physics model used by the network graphics library (Vis.js), the stablelised layout might be same as before you started dragging the node;
-* Highlight a node and its followers (different from the selected node) by clicking on an id in the Id Table's first coloumn;
-* Highlight all nodes whose ids referred to a tag selected by clicking referred by clicking on an id in the Tag Table's first coloumn;
-* Search id or tag in any of the two tables;
-* Sort Ids by clicking Id column of the Id Table;
-* Sort Tags by clicking Tag column of the Tag Table;
-* Sort Tag Frequency by clicking Fruequency column of the Tag Table;
+When **Add** button or **Test** button is clicked, the new network of nodes and edges will be displayed. The newly added nodes will be highlighted. You can visualise the network by the following actions with mouse's scrolling wheal and the left button:
+* Zoom in and out of the network view by moving the mouse scroll wheel.
+* Pan the network view by pressing mouse button on an empty area of the network view and drag. An empty area is anywhere but not a node nor an edge in the network view.
+* Reset the colours of the nodes by clicking on an empty area. 
+* Relayout the network by dragging a node. However, due to the physics model used by the network graphics library (Vis.js), the stablelised layout might be the same as before dragging the node. You can drag a node to a different position to avoid crossing arrows.
+* Highlight a node and its 'following' nodes by clicking on a node.
+* Highlight a node and its 'follower' nodes (opposite to 'following' nodes) by clicking on an id in the Id Table's first coloumn; Together with the 'following' ids in the next column in the Id Table you can view all directly related nodes of the selected node or id. 
+* Highlight all nodes that referred to a selected tag by clicking on a tag in the Tag Table's first coloumn. You can see how many times of this tag has been referred and who referred this tag.
+* Search id or tag from the tables. Id Table and Tag Table have their own search box.
+* Sort data by clicking on a column header of the table, eg, sort ids in Id Table, sort tags in alphanumeric order and sort tag frequency in Tag Table. '#' tags and '@' tags can be grouped by sorting. Most referred tags can be ordered by sorting.
 
 # Design
 ## Classes
-Main classes are defined as below and an instance of the SocialNetwork is created for twitter.
+Main classes are defined as below and an instance of the SocialNetwork is created for Twitter.
 
-```javascript
-class NetworkData
-    Contains data for id_list, following_list, tag_list, and house keeping variables and data related functions.
+**class NetworkData**
+>    Contains data for id_list, following_list, tag_list, and house keeping variables and data related functions.
 
-class NetworkView
-    Contains all house keeping data for selected nodes and their followers and followings, tables, statistic panel, except network, to tables and statistics in HTML document. 
+**class NetworkView**
+>    Contains all house keeping data for selected nodes and their followers and followings, tables, statistic panel in HTML document,  except network. 
 
-class VisNetworkView extends NetworkView       // using Vis.js. Ut could use different network display model
-    Contains network build by nodes and edges using vis.DataSet() and vis.Network() and all data from base class NetworkView.
+**class VisNetworkView extends NetworkView**            // using Vis.js. It could use different network visualisation framework
+>    Derived class from NetworkView. It contains network built by nodes and edges using vis.DataSet() and vis.Network() and all data from base class NetworkView.
 
-class SocialNetwork
-    Contains NetworkData and VisNetworkView;
+**class SocialNetwork**
+>    Contains NetworkData and VisNetworkView;
 
-Create Twitter network:
-    twitter = new SocialNetwork();
+Create an instance of Twitter network:
+    **twitter = new SocialNetwork();**
 
-```
+## Event Handlers
+Event handlers are currently designed as global functions that can be set in the HTML file, index.html. The event handlers can access the 'twitter' instance to get both network data and network view.
+
+## MVC
+In terms of MVC architecure, the application is composed of:
+* Model - class NetworkData
+* View - class NetworkView
+* Controller - event handlers
 
 ## Design Notes
-* In a real social network which has more information about people and their relationships, a more general class of **NetworkData** can be defined to include **People** and **Relationships**. While the class **Person** has id, name, age, id photo, birth place, etc, and the class **Relationship** can be defined with 1:1 or 1:m relationships. When visualising the network, people's photos can be displayed, or people can be grouped and viewed based on the age, birth place, even by the skin colour using the id photos. Thus, more interesting features can be discovered and studied.
+* In a real social network which has more information about people and their relationships, a more general class of **NetworkData** can be defined to include **People** and **Relationships**. While the class **Person** has id, name, age, id photo, birth place, etc, the class **Relationship** can be defined with 1:1 or 1:m relationships. When visualising the network, people's photos can be displayed, or people can be grouped and viewed based on the age, birth place, even by the skin colour using the id photos. Thus, more interesting features can be discovered and studied.
 
-* **VisNetworkView** can be configured using Vis's options. Multiple views can be designed to display the network in different ways such as different node shapes, different colours, different interactions and using different physics models. Multiple views can be displayed as a full view for each tab. Or multiple view are display at the same time by tiled layout.
+* **VisNetworkView** can be configured using Vis's options. Multiple views can be designed to display the network in different ways such using different node shapes, colours, interactions and physics models. Multiple views can be displayed where each full view is displayed by selecting a corresponding tab (at the top of the network view). Or multiple views are displayed at the same time by tiled layout.
 
-* When there are many nodes on the network view, selecting a node and its adjacent nodes for following or follower nodes might be difficult to standout these nodes although their colour have been changed. One solution is to popup a small window to display only the selected node and its adjacent nodes in a circular layout.
+* When there are many nodes on the network view, highlighted node and its adjacent nodes for 'following' or 'follower' nodes might not be standout although their colour have been changed. One solution is to popup a small window to display only the selected node and its adjacent nodes in a circular layout.
 
-* When zoom in and out, it is a best to have a small window at the corner of the network view to show the relative view port to the Canvas for the whole network.
+* When zoom in and out, it is a best to have a small window at the corner of the network view to show the relative viewport to the whole network.
 
 ## Implementation
 ### Vis.js
-Vis.js (version 4) is used for visualising the networks (http://visjs.org). This is powerful tool for 2D/3D graphs, timelines, and especially for network. It handles large amounts of dynamic data and the interaction with the data. It is easy to use. The network can handle a few thousand nodes and edges smoothly on any modern browser for up to using clustering. Network uses HTML canvas for rendering. 
-The default physic model used is BarnesHut, a quadtree based gravity model. This is the fastest, default and recommended solver for non-hierarchical layouts. The behaviour of the layout can be changed by configuring model's parameters such as gravity and spring properties.
+Vis.js (version 4) is used for visualising the Twitter network (http://visjs.org). This is a powerful tool for 2D/3D graphs, timelines, and especially for network. It handles large amounts of dynamic data and the interaction with the data. It is easy to use comparing to D3. The network can handle a few thousand nodes and edges smoothly on any modern browser. To handle a larger amount of nodes, Network has clustering support. It uses HTML canvas for rendering. 
+The default physics model used is BarnesHut, a quadtree based gravity model. This is the fastest, default and recommended solver for non-hierarchical layouts. The behaviour of the layout can be changed by configuring model's parameters such as gravity and spring properties.
 Vis.js is dual licensed under both Apache 2.0 and MIT.
 
 ### DataTable
-DataTables is a plug-in for the jQuery Javascript library, implemented by https://datatables.net/. Tables can be scrolled in both vertical and horizontal directions.
+DataTables is a plug-in for the jQuery Javascript library, implemented by https://datatables.net/. Tables can be scrolled in both vertical and horizontal directions. Data in each column can be sorted the number of records or rows displayed displayed and a search box is embedded. 
 It is MIT licensed.  
 
 ### Foundation
@@ -97,22 +107,29 @@ It is a responsive front-end framework for website design. Foundation's grid sys
 * Image file
   * netvisicon.png
 
-### To Do List
-* Add a overview window to show the viewport in respect of the total view
-* Cursor of selected id or tag
-* legends of colours
-* Read test file from a dialogbox
-* Clustering for more nodes
-* Hashtables for tags
-
 ## Test
-A test file 'test_samples.js' contains sample data of following relationships and tags fetched ten times using the sample() and tag() functions. Currently. 
-The **Test** button is used to add all the nodes obtained from the following relationships and tags.
+A test file 'test_samples.js' contains sample data of 'following' relationships and tags fetched for the ids identified from the 'following' relationship. These data are collected from runs of the application and printed to a variable 'test_samples'. 
 
-Print button can be used to flush out the id list, following list, unique tag list, etc. If you want to store the fetched sample data for future test, you can copy the text starting 'var test_samples = ' and end at '];', and save it to test_samples.js. At the moment, only this file is read for testing. Other files in JSON format can be implemented in future.
+**Test** button is used to add all the nodes and edges by reading the 'following' relationships and tags from 'test_samples.js'.
 
-### Performance test
+**Print** button can be used to flush out the id list, following list, unique tag list, construction of the network, etc. If you want to store the fetched sample data for future test, you can copy the text starting from 'var test_samples = ' to '];', and save it to test_samples.js. At the moment, only this file is read for testing. Other file formats including JSON format can be implemented in future. A file diallog box can be implemented to read any data file.
+
+### Functional Test
+Reading 'test_samples.js' and compare the printed data can be used for testing the correct construction of the network and tag references. 
+
+### GUI Test
+A sequence of actions is used to test the layout of the page, network view, tables, and statistic & print data panels. An examples of the action sequence could be: 
+Add button, Add button, Reset, Add button, Reset, Click node, Click node, Zoom In/Out, Pan, Reset, Select Id, Select Id, Scroll Id Table, Sort Id, Search Id, Select Id, Select Tag, Select Tag, Select Id, Select Node, Clear button, Add button, Test button, Print button, Hide Print button. 
+
+There is a know bug on reset selected node when clicking on an id from the Id Table or on a tag from the Tag Table. It is recommended to deselect the selected node by clicking on an empty area. Further investigation is required to look at Vis's APIs. 
+
+### Performance Test
 Performance test should be undertaken for large amounts of nodes. Auto adjustment of the parameters of the physics model based on the number of nodes in the network might be investigated to find best performance for network layout. 
+
+### Web Browser
+This application should work in browsers with ECMAScript 2015, it but has not been tested yet. 
+It is not working on IE 11.
+
 
 # Coding Task (from Alex)
 

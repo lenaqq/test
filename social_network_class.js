@@ -8,7 +8,7 @@ class SocialNetwork
 }
 
 const NODE_COLOUR                         = '#EAE7E4';
-const ADDED_NODE_COLOUR                   = '#33BBAA';
+const ADDED_NODE_COLOUR                   = '#33BB88';
 const SELECTED_NODE_FOR_FOLLOWING_COLOUR  = '#33BBAA';
 const SELECTED_NODE_FOR_FOLLOWER_COLOUR   = '#33BBAA';
 const SELECTED_NODE_COLOUR                = '#33AFAA';
