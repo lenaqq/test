@@ -77,6 +77,8 @@ In terms of MVC architecure, the application is composed of:
 
 * When zoom in and out, it is a best to have a small window at the corner of the network view to show the relative viewport to the whole network.
 
+* Unique tags are converted to lower case. Some symbols such as ':' at the end of a tag might need to filtered out to make an unique tag, eg, '@techcrunch' and '@techcrunch:' are treated as one tag '@techcrunch'.
+
 ## Implementation
 ### Vis.js
 Vis.js (version 4) is used for visualising the Twitter network (http://visjs.org). This is a powerful tool for 2D/3D graphs, timelines, and especially for network. It handles large amounts of dynamic data and the interaction with the data. It is easy to use comparing to D3. The network can handle a few thousand nodes and edges smoothly on any modern browser. To handle a larger amount of nodes, Network has clustering support. It uses HTML canvas for rendering. 

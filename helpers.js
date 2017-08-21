@@ -108,9 +108,9 @@ function count_tags(id_list, tag_list, unique_tag_list, tag_count_list, tag_ref_
 
 		for (var one_tag of tag_list[id_idx]) // i = 0; i < tags.length; i++)
 		{
-  			tag_index = unique_tag_list.indexOf(one_tag); //tags[i]);
+  			tag_index = unique_tag_list.indexOf(one_tag.toLowerCase()); //tags[i]);
 
-  			if (tag_index >= 0)
+        if (tag_index >= 0)
         {
     				tag_count_list[tag_index]++;
             tag_ref_id_list[tag_index].push(id_list[id_idx]);
