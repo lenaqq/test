@@ -33,11 +33,11 @@ function add_network_handler()
 
     // update global network data
     let tag_list = twitter.data.get_tag_list(twitter.data.id_list);
-    let tag_data_set = twitter.data.build_tag_list(tag_list);
 
-    global_id_data_set = twitter.data.find_following_ids_and_tags();
+    twitter.view.global_tag_data_set = twitter.data.build_tag_list(tag_list);
+    twitter.view.global_id_data_set = twitter.data.find_following_ids_and_tags();
 
-    twitter.view.update_tables_and_stats(twitter.data, global_id_data_set, tag_data_set);
+    twitter.view.update_tables_and_stats(twitter.data);
 }
 
 function test_handler()
@@ -95,11 +95,10 @@ function test_handler()
     // update global network data
     let tag_list = twitter.data.get_tag_list(twitter.data.id_list);
 
-    let tag_data_set = twitter.data.build_tag_list(tag_list);
+    twitter.view.global_tag_data_set = twitter.data.build_tag_list(tag_list);
+    twitter.view.global_id_data_set = twitter.data.find_following_ids_and_tags();
 
-    global_id_data_set = twitter.data.find_following_ids_and_tags();
-
-    twitter.view.update_tables_and_stats(twitter.data, global_id_data_set, tag_data_set);
+    twitter.view.update_tables_and_stats(twitter.data);
 }
 
 function clear_network_handler()
@@ -118,10 +117,11 @@ function clear_network_handler()
 
     click_node_handler();
 
-    global_id_data_set = [];
+    twitter.data.clear();
+    twitter.view.clear();
 
     $('#id_table').DataTable( {
-        data: global_id_data_set,
+        data: [],
         columns: [
                     { title: "Id" },
                     { title: "Following Ids" },
@@ -133,10 +133,8 @@ function clear_network_handler()
         paging:         false
       } );
 
-    tag_data_set = [];
-
     $('#tag_table').DataTable( {
-      data: tag_data_set,
+      data: [],
       columns: [
                   { title: "Tag" },
                   { title: "Frequency" },
@@ -147,10 +145,6 @@ function clear_network_handler()
       //scrollCollapse: true,
       paging:         false
     } );       
-
-    twitter.data.clear();
-    twitter.view.clear();
-
 
     $('#num_ids').html(twitter.data.id_list.length.toString());
     $('#num_edges').html(twitter.data.following_list.length.toString());
@@ -274,8 +268,8 @@ function print_data_handler()
         print_list('UNIQUE TAG LIST', twitter.data.unique_tag_list);
         print_list('TAG COUNT LIST', twitter.data.tag_count_list);
 
-        text_elem.innerHTML += RETURN_CHARS + 'Id TABLE: ' + RETURN_CHARS + JSON.stringify(global_id_data_set);
-        text_elem.innerHTML += RETURN_CHARS + 'Tag TABLE: ' + RETURN_CHARS + JSON.stringify(global_tag_data_set);
+        text_elem.innerHTML += RETURN_CHARS + 'Id TABLE: ' + RETURN_CHARS + JSON.stringify(twitter.view.global_id_data_set);
+        text_elem.innerHTML += RETURN_CHARS + 'Tag TABLE: ' + RETURN_CHARS + JSON.stringify(twitter.view.global_tag_data_set);
 
         print_lists_to_var();
     }

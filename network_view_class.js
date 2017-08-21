@@ -12,23 +12,18 @@ class NetworkView
         this.selected_and_follower_node_ids = [];
         this.selected_id_table_id_elem = null;
         this.selected_tag_table_id_elem = null;
+
+        this.global_id_data_set = [];
+        this.global_tag_data_set = [];;
     }
 
-    clear()
-    {
-        this.selected_and_following_node_ids = [];
-        this.selected_and_follower_node_ids = [];
-        this.selected_id_table_id_elem = null;
-        this.selected_tag_table_id_elem = null;      
-    }
-
-    update_tables(global_id_data_set, tag_data_set)
+    update_tables()
     {
         /*
          * Update view
          */
         $('#id_table').DataTable( {
-            data: global_id_data_set,
+            data: this.global_id_data_set,
             columns: [
                         { title: "Id" },
                         { title: "Following Ids" },
@@ -43,7 +38,7 @@ class NetworkView
         $("div.toolbar_id_table").html('<b>Id Table</b>');   
 
         $('#tag_table').DataTable( {
-            data: tag_data_set,
+            data: this.global_tag_data_set,
             columns: [
                       { title: "Tag" },
                       { title: "Frequency" },
@@ -74,14 +69,14 @@ class NetworkView
 
         if (network_data.id_list.length > 0)
         {
-            max_id_follower_pair_list = network_data.find_most_followed_id();
+            max_id_follower_pair_list = network_data.find_most_followed_id(this.global_id_data_set);
             if (max_id_follower_pair_list.length > 0)
             {
                 max_ids_followers = max_id_follower_pair_list[0].join(', ');
                 num_followers = max_id_follower_pair_list[1];
             }
 
-            max_id_following_pair_list = network_data.find_most_following_id();
+            max_id_following_pair_list = network_data.find_most_following_id(this.global_id_data_set);
             if (max_id_following_pair_list.length > 0)
             {
                 max_ids_followings = max_id_following_pair_list[0].join(', ');
@@ -103,11 +98,24 @@ class NetworkView
         }
     }   
 
-    update_tables_and_stats(network_data, global_id_data_set, tag_data_set) 
+    update_tables_and_stats(network_data) 
     {
         this.update_stats(network_data);
-        this.update_tables(global_id_data_set, tag_data_set);
+        this.update_tables();
     }
+
+    clear()
+    {
+        this.selected_and_following_node_ids = [];
+        this.selected_and_follower_node_ids = [];
+        this.selected_id_table_id_elem = null;
+        this.selected_tag_table_id_elem = null;    
+
+        this.global_id_data_set = [];
+        this.global_tag_data_set = [];;  
+    }
+
+
 }
 
 /*
@@ -250,7 +258,7 @@ class VisNetworkView extends NetworkView
         selected_node_ids.push(id);
 
         let id_idx = network_data.id_list.indexOf(id);
-        let folowing_list = global_id_data_set[id_idx][1]; // following id list
+        let folowing_list = this.global_id_data_set[id_idx][1]; // following id list
 
         for (let following_id of folowing_list)
         {
@@ -270,7 +278,7 @@ class VisNetworkView extends NetworkView
 
         id_idx = network_data.id_list.indexOf(id);
 
-        let folowing_list = global_id_data_set[id_idx][1]; // following id list
+        let folowing_list = this.global_id_data_set[id_idx][1]; // following id list
 
         for (let following_relation of network_data.following_list)
         {

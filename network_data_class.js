@@ -115,7 +115,7 @@ class NetworkData
         return data_set;
     }
 
-    find_most_followed_id()
+    find_most_followed_id(id_data_set)
     {
         let max_followed_count = 0;
         let max_id_follower_pair = [ [], 0];
@@ -126,7 +126,7 @@ class NetworkData
 
             id_idx = this.id_list.indexOf(id);
           
-            let folowing_list = global_id_data_set[id_idx][1]; // following id list
+            let folowing_list = id_data_set[id_idx][1]; // following id list
 
             for (let following_relation of this.following_list)
             {
@@ -154,7 +154,7 @@ class NetworkData
         return max_id_follower_pair;
     }
 
-    find_most_following_id()
+    find_most_following_id(id_data_set)
     {
         let max_following_count = 0;
         let max_id_following_pair = [ -1, 0];
@@ -165,7 +165,7 @@ class NetworkData
 
             id_idx = this.id_list.indexOf(id);
           
-            let folowing_list = global_id_data_set[id_idx][1]; // following id list
+            let folowing_list = id_data_set[id_idx][1]; // following id list
 
             for (let following_relation of this.following_list)
             {
